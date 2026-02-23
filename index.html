@@ -1377,7 +1377,13 @@
             requires a local server. Please run <code>run_app.bat</code> or host the files online to continue.</p>
     </div>
     <script>
-        setTimeout(() => { if (!window.libLoaded) document.getElementById('loading-err').style.display = 'flex'; }, 2500);
+        // Only show the "Local Server Required" message if opened via file:// protocol
+        // AND the module script hasn't loaded within 2.5 seconds.
+        setTimeout(() => {
+            if (window.location.protocol === 'file:' && !window.libLoaded) {
+                document.getElementById('loading-err').style.display = 'flex';
+            }
+        }, 2500);
     </script>
     <div class="toast-wrap" id="toast-wrap"></div>
 
@@ -1759,11 +1765,11 @@
             }
         }
 
-        async function addLink(slug, lnk) {
+        async function addLink(lnk) {
             const me = getCurrentUser();
             const n = {
-                slug,
-                ownerId: me ? me.uid : null,
+                slug: lnk.slug,
+                ownerId: lnk.ownerId || (me ? me.uid : null),
                 title: lnk.title.trim(),
                 url: ensureHttp(lnk.url.trim()),
                 icon: lnk.icon || 'fa-solid fa-link',
