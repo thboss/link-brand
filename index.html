@@ -13,6 +13,10 @@
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         *,
         *::before,
@@ -1369,36 +1373,12 @@
 
 <body>
     <div id="app"></div>
-    <div id="loading-err" class="no-mod-fb" style="display: none;">
-        <h1>⚠️ يتطلب تشغيل الموقع خادماً محلياً</h1>
-        <p>بسبب قيود المتصفح الأمنية، لا يمكن تشغيل هذا الموقع مباشرة من المجلد. يرجى استخدام <code>run_app.bat</code>
-            الذي قمت بإنشائه لك، أو رفعه على استضافة.</p>
-        <p style="color:var(--text2); font-size:0.9rem; margin-top:1rem">Due to browser security settings, this app
-            requires a local server. Please run <code>run_app.bat</code> or host the files online to continue.</p>
-    </div>
-    <script>
-        // Only show the "Local Server Required" message if opened via file:// protocol
-        // AND the module script hasn't loaded within 2.5 seconds.
-        setTimeout(() => {
-            if (window.location.protocol === 'file:' && !window.libLoaded) {
-                document.getElementById('loading-err').style.display = 'flex';
-            }
-        }, 2500);
-    </script>
     <div class="toast-wrap" id="toast-wrap"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        window.libLoaded = true;
-
+    <script>
         // ============================================================
-        // FIREBASE CONFIGURATION
+        // FIREBASE CONFIGURATION (Compat)
         // ============================================================
-        // 1. Go to https://console.firebase.google.com/
-        // 2. Create a project and add a Web App
-        // 3. Paste your config object here:
         const firebaseConfig = {
             apiKey: "AIzaSyBg9oNlXhGmhNk3Woi65t-kNynemkVAVnw",
             authDomain: "link-brand-35f0b.firebaseapp.com",
@@ -1409,9 +1389,9 @@
             measurementId: "G-SZQ8QZJDK9"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
         const delay = ms => new Promise(r => setTimeout(r, ms));
 
         // ============================================================
@@ -1612,7 +1592,6 @@
         function ensureHttp(u) { if (!u) return u; return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
         function isEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
         function uid() { return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2); }
-        function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
         // ============================================================
         // TOAST
@@ -1659,15 +1638,14 @@
 
             try {
                 // Check if slug is taken in Firestore
-                const q = query(collection(db, "brands"), where("slug", "==", slug));
-                const snap = await getDocs(q);
+                const snap = await db.collection("brands").where("slug", "==", slug).get();
                 if (!snap.empty) return { ok: false, err: 'هذا الرابط مستخدم بالفعل، اختر اسماً آخر.' };
 
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                const cred = await auth.createUserWithEmailAndPassword(email, password);
                 const user = cred.user;
 
                 // Save brand info to Firestore
-                await setDoc(doc(db, "brands", user.uid), {
+                await db.collection("brands").doc(user.uid).set({
                     brandName,
                     slug,
                     email,
@@ -1688,12 +1666,12 @@
         async function login(email, password) {
             if (!email || !password) return { ok: false, err: 'البريد الإلكتروني وكلمة المرور مطلوبان.' };
             try {
-                const cred = await signInWithEmailAndPassword(auth, email, password);
+                const cred = await auth.signInWithEmailAndPassword(email, password);
                 const user = cred.user;
 
                 // Fetch brand info from Firestore
-                const d = await getDoc(doc(db, "brands", user.uid));
-                if (!d.exists()) return { ok: false, err: 'المستخدم غير موجود في قاعدة البيانات.' };
+                const d = await db.collection("brands").doc(user.uid).get();
+                if (!d.exists) return { ok: false, err: 'المستخدم غير موجود في قاعدة البيانات.' };
 
                 const brandData = d.data();
                 const safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, uid: user.uid };
@@ -1708,40 +1686,37 @@
         }
 
         async function logout() {
-            await signOut(auth);
+            await auth.signOut();
             setUser(null);
         }
 
         // Persistent Auth State Handler
-        onAuthStateChanged(auth, async (user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
-                const d = await getDoc(doc(db, "brands", user.uid));
-                if (d.exists()) {
+                const d = await db.collection("brands").doc(user.uid).get();
+                if (d.exists) {
                     const brandData = d.data();
                     setUser({ email: user.email, brandName: brandData.brandName, slug: brandData.slug, uid: user.uid });
                 }
             } else {
                 setUser(null);
             }
-            // re-render current page to reflect auth state if needed
-            // but usually navigate handles this
         });
         async function updateProfile(updates) {
             const me = getCurrentUser(); if (!me) return { ok: false, err: 'Not authenticated.' };
             try {
-                const brandRef = doc(db, "brands", me.uid);
+                const brandRef = db.collection("brands").doc(me.uid);
                 if (updates.brandName) {
                     const ns = slugify(updates.brandName);
                     // Check slug uniqueness (excluding current user)
-                    const qSlug = query(collection(db, "brands"), where("slug", "==", ns));
-                    const snap = await getDocs(qSlug);
+                    const snap = await db.collection("brands").where("slug", "==", ns).get();
                     if (!snap.empty && snap.docs[0].id !== me.uid) return { ok: false, err: 'اسم العلامة التجارية مستخدم بالفعل.' };
 
                     updates.slug = ns;
                 }
 
-                await updateDoc(brandRef, updates);
-                const d = await getDoc(brandRef);
+                await brandRef.update(updates);
+                const d = await brandRef.get();
                 const stored = d.data();
                 const safe = { email: stored.email, brandName: stored.brandName, slug: stored.slug, uid: stored.uid };
                 setUser(safe);
@@ -1756,8 +1731,7 @@
         // ============================================================
         async function getLinks(slug) {
             try {
-                const q = query(collection(db, "links"), where("slug", "==", slug));
-                const snap = await getDocs(q);
+                const snap = await db.collection("links").where("slug", "==", slug).get();
                 return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => b.created - a.created);
             } catch (e) {
                 console.error("Error fetching links:", e);
@@ -1775,16 +1749,15 @@
                 icon: lnk.icon || 'fa-solid fa-link',
                 created: Date.now()
             };
-            const docRef = doc(collection(db, "links"));
-            await setDoc(docRef, n);
+            const docRef = await db.collection("links").add(n);
             return { id: docRef.id, ...n };
         }
 
         async function updateLink(id, up) {
             try {
-                const docRef = doc(db, "links", id);
+                const docRef = db.collection("links").doc(id);
                 if (up.url) up.url = ensureHttp(up.url);
-                await updateDoc(docRef, up);
+                await docRef.update(up);
                 return true;
             } catch (e) {
                 console.error("Error updating link:", e);
@@ -1794,10 +1767,7 @@
 
         async function deleteLink(id) {
             try {
-                await updateDoc(doc(db, "links", id), { deleted: true }); // Soft delete or hard delete?
-                // For now, hard delete is simpler for this app size
-                const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-                await deleteDoc(doc(db, "links", id));
+                await db.collection("links").doc(id).delete();
             } catch (e) {
                 console.error("Error deleting link:", e);
             }
@@ -1805,8 +1775,7 @@
 
         async function getBrand(slug) {
             try {
-                const q = query(collection(db, "brands"), where("slug", "==", slug));
-                const snap = await getDocs(q);
+                const snap = await db.collection("brands").where("slug", "==", slug).get();
                 if (snap.empty) return null;
                 const u = snap.docs[0].data();
                 return { brandName: u.brandName, slug: u.slug, email: u.email };
