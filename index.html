@@ -1369,7 +1369,7 @@
 
 <body>
     <div id="app"></div>
-    <div id="loading-err" class="no-mod-fb">
+    <div id="loading-err" class="no-mod-fb" style="display: none;">
         <h1>⚠️ يتطلب تشغيل الموقع خادماً محلياً</h1>
         <p>بسبب قيود المتصفح الأمنية، لا يمكن تشغيل هذا الموقع مباشرة من المجلد. يرجى استخدام <code>run_app.bat</code>
             الذي قمت بإنشائه لك، أو رفعه على استضافة.</p>
@@ -1406,6 +1406,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const delay = ms => new Promise(r => setTimeout(r, ms));
 
         // ============================================================
         // I18N (Translations)
@@ -1949,57 +1950,6 @@
             q('#hview')?.addEventListener('click', () => window.open(publicUrl(me.slug), '_blank'));
         }
 
-        // ============================================================
-        // AUTH PAGE
-        // ============================================================
-        async function renderPublic(slug) {
-            const b = await getBrand(slug);
-            if (!b) return renderNotFound(slug);
-            const links = await getLinks(slug);
-            const l = getLang();
-            document.getElementById('app').innerHTML = `
-<div class="public-page">
-  <div class="public-header">
-    <div class="nav-actions" style="position: absolute; top: 1.5rem; inset-inline-end: 1.5rem;">
-       <button class="btn btn-g btn-sm" id="lang-toggle" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">${t('langName')}</button>
-    </div>
-    <div class="public-avatar">${b.brandName.charAt(0)}</div>
-    <h1 class="public-name">${b.brandName}</h1>
-    <div class="public-slug">@${b.slug}</div>
-  </div>
-  <div class="public-links">
-    ${links.map(lx => `
-<a href="${lx.url}" class="public-link-item" target="_blank">
-  <div class="p-link-icon">${iconHtml(lx.icon)}</div>
-  <div class="p-link-label">${lx.title}</div>
-</a>`).join('')}
-  </div>
-  <footer class="public-footer">
-    <div class="p-qr-wrap" id="pq"></div>
-    <p>${t('footerText')}</p>
-    <button class="btn btn-g btn-sm" id="clb" style="margin-top:1rem">${t('copyLink')}</button>
-  </footer>
-</div>`;
-            q('#lang-toggle').onclick = () => setLang(l === 'ar' ? 'en' : 'ar');
-            q('#clb').onclick = () => {
-                navigator.clipboard.writeText(window.location.href);
-                toast(t('linkCopied'));
-            };
-            await delay(100); makeQR('pq', window.location.href, 120);
-        }
-
-        function renderNotFound(slug) {
-            document.getElementById('app').innerHTML = `
-<div class="page flex-center" style="min-height:80vh">
-  <div class="auth-card" style="text-align:center">
-    <h1 style="font-size:3rem; margin-bottom:1rem">404</h1>
-    <h2>${t('notFound')}</h2>
-    <p style="margin:1rem 0; color:var(--text-s)">${t('notFoundDesc')} <code style="color:var(--p)">@${slug}</code>. ${t('noAccount').split('؟')[0]}؟</p>
-    <button class="btn btn-p" id="bkh">${t('backHome')}</button>
-  </div>
-</div>`;
-            q('#bkh').onclick = () => navigate('/');
-        }
         async function renderAuth(mode) {
             let cur = mode || 'login';
             async function draw() {
