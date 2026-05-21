@@ -33,11 +33,13 @@
             --bg-card-solid: #0f1428;
             --border: rgba(255, 255, 255, 0.07);
             --border-h: rgba(255, 255, 255, 0.15);
-            --g1: #7c3aed;
+            --primary: #7c3aed;
+            --primary-rgb: 124, 58, 237;
+            --g1: var(--primary);
             --g2: #3b82f6;
             --g3: #06b6d4;
             --grad: linear-gradient(135deg, var(--g1), var(--g2), var(--g3));
-            --grad-t: linear-gradient(135deg, #a78bfa, #60a5fa, #67e8f9);
+            --grad-t: linear-gradient(135deg, var(--primary), #60a5fa, #67e8f9);
             --text: #f1f5f9;
             --text2: #94a3b8;
             --muted: #475569;
@@ -148,13 +150,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: .9rem 2rem;
+            padding: .8rem 1rem;
             background: rgba(8, 11, 20, .85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 100
+        }
+        
+        @media(min-width: 768px) {
+            .nav {
+                padding: .9rem 2rem;
+            }
         }
 
         .nav-brand {
@@ -194,13 +202,13 @@
         .btn-p {
             background: var(--grad);
             color: #fff;
-            box-shadow: 0 4px 18px rgba(124, 58, 237, .4)
+            box-shadow: 0 4px 18px rgba(var(--primary-rgb), .4)
         }
 
         .btn-p:hover {
             opacity: .88;
             transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(124, 58, 237, .5)
+            box-shadow: 0 8px 28px rgba(var(--primary-rgb), .5)
         }
 
         .btn-g {
@@ -280,9 +288,9 @@
             display: inline-flex;
             align-items: center;
             gap: .45rem;
-            background: rgba(124, 58, 237, .12);
-            border: 1px solid rgba(124, 58, 237, .3);
-            color: #a78bfa;
+            background: rgba(var(--primary-rgb), .12);
+            border: 1px solid rgba(var(--primary-rgb), .3);
+            color: var(--primary);
             padding: .32rem .9rem;
             border-radius: 99px;
             font-size: .78rem;
@@ -294,7 +302,7 @@
         .dot {
             width: 6px;
             height: 6px;
-            background: #a78bfa;
+            background: var(--primary);
             border-radius: 50%;
             animation: pulse 2s infinite
         }
@@ -491,8 +499,8 @@
 
         .form-input:focus {
             border-color: var(--g1);
-            background: rgba(124, 58, 237, .06);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, .15)
+            background: rgba(var(--primary-rgb), .06);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), .15)
         }
 
         .form-input::placeholder {
@@ -545,7 +553,7 @@
         }
 
         .auth-switch a {
-            color: #a78bfa;
+            color: var(--primary);
             cursor: pointer;
             font-weight: 600
         }
@@ -555,94 +563,154 @@
         }
 
         /* DASHBOARD */
-        .dash-layout {
+        /* DASHBOARD */
+        .dashboard-layout {
             flex: 1;
-            display: grid;
-            grid-template-columns: 272px 1fr;
-            min-height: calc(100vh - 63px)
-        }
-
-        @media(max-width:768px) {
-            .dash-layout {
-                grid-template-columns: 1fr
-            }
-        }
-
-        .sidebar {
-            background: rgba(10, 14, 28, .92);
-            border-left: 1px solid var(--border);
-            padding: 1.4rem .9rem;
             display: flex;
             flex-direction: column;
-            gap: .35rem;
-            backdrop-filter: blur(20px)
+            min-height: calc(100vh - 65px);
+            position: relative;
+            padding-bottom: 60px;
         }
-
-        .sb-label {
-            font-size: .68rem;
-            font-weight: 700;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-            color: var(--muted);
-            padding: .45rem .7rem;
-            margin-top: .4rem
+        @media (min-width: 768px) {
+            .dashboard-layout {
+                flex-direction: row;
+                gap: 2rem;
+                padding: 2rem;
+                padding-bottom: 2rem;
+                max-width: 1400px;
+                margin: 0 auto;
+                width: 100%;
+                align-items: flex-start;
+            }
         }
+        .mobile-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            background: rgba(10, 14, 28, 0.85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 65px;
+            z-index: 40;
+        }
+        @media (min-width: 768px) { .mobile-top-bar { display: none; } }
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(10, 14, 28, 0.85);
+            backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+            z-index: 50;
+        }
+        @media (min-width: 768px) { .bottom-nav { display: none; } }
+        .bn-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text2);
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--r-sm);
+            text-decoration: none;
+            transition: var(--tr);
+            cursor: pointer;
+        }
+        .bn-item.active { color: var(--primary); }
+        .bn-item .ic {
+            font-size: 1.25rem;
+            margin-bottom: 0.1rem;
+            transition: transform 0.2s ease;
+        }
+        .bn-item.active .ic { transform: scale(1.15); }
+        .desktop-sidebar { display: none; }
+        @media (min-width: 768px) {
+            .desktop-sidebar {
+                display: flex;
+                flex-direction: column;
+                width: 280px;
+                flex-shrink: 0;
+                background: rgba(15, 20, 35, 0.4);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: var(--r-xl);
+                padding: 1.5rem;
+                backdrop-filter: blur(24px);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+                position: sticky;
+                top: calc(65px + 2rem);
+            }
+        }
+        .sidebar-section-label {
+            display: block; font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--text2); padding: 0.5rem 0.75rem;
+            margin-top: 1rem; margin-bottom: 0.2rem;
+        }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1rem; border-radius: var(--r-sm);
+            color: var(--text2); font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; border: 1px solid transparent;
+            transition: var(--tr); text-decoration: none;
+        }
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text); transform: translateX(4px);
+        }
+        .sidebar-link.active {
+            background: rgba(var(--primary-rgb), 0.12);
+            border-color: rgba(var(--primary-rgb), 0.2); color: var(--primary);
+        }
+        .sidebar-link .icon { font-size: 1.2rem; width: 24px; text-align: center; }
+        .sidebar-profile {
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-top: 2rem; padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--r-lg);
+        }
+        .sidebar-profile-name { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+        .sidebar-profile-handle { font-size: 0.8rem; color: var(--text2); }
+        .main-content {
+            flex: 1; padding: 1.5rem; display: flex; flex-direction: column;
+            gap: 2rem; width: 100%; max-width: 800px; margin: 0 auto;
+        }
+        @media (min-width: 768px) { .main-content { padding: 0; max-width: 100%; } }
 
-        .sb-link {
+        .sb-av {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--grad);
             display: flex;
             align-items: center;
-            gap: .7rem;
-            padding: .65rem .8rem;
-            border-radius: var(--r-sm);
-            color: var(--text2);
-            font-weight: 500;
-            font-size: .88rem;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: var(--tr)
-        }
-
-        .sb-link:hover {
-            background: rgba(255, 255, 255, .05);
-            color: var(--text)
-        }
-
-        .sb-link.active {
-            background: rgba(124, 58, 237, .16);
-            border-color: rgba(124, 58, 237, .32);
-            color: #a78bfa
-        }
-
-        .sb-link .ic {
-            font-size: 1rem;
-            width: 18px;
-            text-align: center
-        }
-
-        .sb-profile {
-            margin-top: auto;
-            padding: .9rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--r)
-        }
-
-        .sb-name {
-            font-weight: 700;
-            font-size: .92rem
-        }
-
-        .sb-handle {
-            font-size: .77rem;
-            color: var(--muted)
+            justify-content: center;
+            font-size: .9rem;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0
         }
 
         .main {
-            padding: 1.8rem;
+            padding: 1.2rem;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 1.8rem
+        }
+        
+        @media(min-width: 768px) {
+            .main {
+                padding: 1.8rem;
+            }
         }
 
         .sec-header {
@@ -668,26 +736,29 @@
         /* CARDS */
         .card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--r-lg);
-            padding: 1.6rem;
-            backdrop-filter: blur(16px);
-            transition: var(--tr)
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--r-xl);
+            padding: 1.75rem;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .card:hover {
-            border-color: var(--border-h)
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+            transform: translateY(-2px);
         }
 
         .p-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 1.4rem
         }
 
-        @media(max-width:600px) {
+        @media(min-width:640px) {
             .p-grid {
-                grid-template-columns: 1fr
+                grid-template-columns: 1fr 1fr
             }
         }
 
@@ -748,16 +819,18 @@
             display: flex;
             align-items: center;
             gap: .9rem;
-            background: rgba(255, 255, 255, .03);
-            border: 1px solid var(--border);
+            background: linear-gradient(rgba(var(--brand-rgb, var(--primary-rgb)), .02), rgba(var(--brand-rgb, var(--primary-rgb)), .02)), rgba(255, 255, 255, .01);
+            border: 1px solid rgba(var(--brand-rgb, var(--primary-rgb)), .1);
             border-radius: var(--r);
             padding: .9rem 1.1rem;
-            transition: var(--tr)
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
         }
 
         .link-item:hover {
-            border-color: var(--border-h);
-            background: rgba(255, 255, 255, .05)
+            border-color: rgba(var(--brand-rgb, var(--primary-rgb)), .35);
+            background: linear-gradient(rgba(var(--brand-rgb, var(--primary-rgb)), .06), rgba(var(--brand-rgb, var(--primary-rgb)), .06)), rgba(255, 255, 255, .01);
+            box-shadow: 0 4px 20px rgba(var(--brand-rgb, var(--primary-rgb)), .15);
+            transform: translateY(-2px);
         }
 
         .li-icon {
@@ -769,8 +842,8 @@
             justify-content: center;
             font-size: 1.3rem;
             flex-shrink: 0;
-            background: rgba(124, 58, 237, .14);
-            border: 1px solid rgba(124, 58, 237, .22)
+            background: rgba(var(--brand-rgb, var(--primary-rgb)), .12);
+            border: 1px solid rgba(var(--brand-rgb, var(--primary-rgb)), .2);
         }
 
         .li-info {
@@ -977,7 +1050,7 @@
 
         @keyframes glow {
             0% {
-                box-shadow: 0 0 0 4px rgba(124, 58, 237, .3), 0 0 28px rgba(124, 58, 237, .3)
+                box-shadow: 0 0 0 4px rgba(var(--primary-rgb), .3), 0 0 28px rgba(var(--primary-rgb), .3)
             }
 
             100% {
@@ -1009,8 +1082,8 @@
             display: flex;
             align-items: center;
             gap: .95rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: linear-gradient(rgba(var(--brand-rgb, var(--primary-rgb)), .03), rgba(var(--brand-rgb, var(--primary-rgb)), .03)), var(--bg-card);
+            border: 1px solid rgba(var(--brand-rgb, var(--primary-rgb)), .15);
             border-radius: var(--r);
             padding: .95rem 1.2rem;
             text-decoration: none;
@@ -1021,10 +1094,10 @@
         }
 
         .pub-link:hover {
-            background: rgba(124, 58, 237, .12);
-            border-color: rgba(124, 58, 237, .4);
+            background: linear-gradient(rgba(var(--brand-rgb, var(--primary-rgb)), .12), rgba(var(--brand-rgb, var(--primary-rgb)), .12)), var(--bg-card);
+            border-color: rgba(var(--brand-rgb, var(--primary-rgb)), .5);
             transform: translateY(-2px);
-            box-shadow: 0 7px 28px rgba(124, 58, 237, .2)
+            box-shadow: 0 8px 30px rgba(var(--brand-rgb, var(--primary-rgb)), .25);
         }
 
         .pub-link-icon {
@@ -1054,20 +1127,8 @@
             color: #1877f2
         }
 
-        .fa-linkedin {
-            color: #0a66c2
-        }
-
         .fa-snapchat {
             color: #fffc00
-        }
-
-        .fa-pinterest {
-            color: #e60023
-        }
-
-        .fa-github {
-            color: #f1f5f9
         }
 
         .fa-whatsapp {
@@ -1078,10 +1139,6 @@
             color: #26a5e4
         }
 
-        .fa-twitch {
-            color: #9146ff
-        }
-
         .fa-globe {
             color: #60a5fa
         }
@@ -1090,8 +1147,36 @@
             color: #94a3b8
         }
 
+        .fa-phone {
+            color: #10b981
+        }
+
+        .fa-location-dot {
+            color: #ea4335
+        }
+
         .fa-link {
-            color: #a78bfa
+            color: var(--primary)
+        }
+
+        /* Brand Class Mapping Definitions */
+        .pl-instagram   { --brand-color: #e1306c; --brand-rgb: 225, 48, 108; }
+        .pl-twitter     { --brand-color: #1da1f2; --brand-rgb: 29, 161, 242; }
+        .pl-tiktok      { --brand-color: #69c9d0; --brand-rgb: 105, 201, 208; }
+        .pl-youtube     { --brand-color: #ff0000; --brand-rgb: 255, 0, 0; }
+        .pl-facebook    { --brand-color: #1877f2; --brand-rgb: 24, 119, 242; }
+        .pl-snapchat    { --brand-color: #fffc00; --brand-rgb: 255, 252, 0; }
+        .pl-whatsapp    { --brand-color: #25d366; --brand-rgb: 37, 211, 102; }
+        .pl-telegram    { --brand-color: #26a5e4; --brand-rgb: 38, 165, 228; }
+        .pl-website     { --brand-color: #60a5fa; --brand-rgb: 96, 165, 250; }
+        .pl-emailLink   { --brand-color: #94a3b8; --brand-rgb: 148, 163, 184; }
+        .pl-phone       { --brand-color: #10b981; --brand-rgb: 16, 185, 129; }
+        .pl-location    { --brand-color: #ea4335; --brand-rgb: 234, 67, 53; }
+
+        /* Force brand colors on icons inside cards with brand classes */
+        [class*="pl-"] .pub-link-icon i,
+        [class*="pl-"] .li-icon i {
+            color: var(--brand-color) !important;
         }
 
         .pub-link-name {
@@ -1133,7 +1218,7 @@
         }
 
         .pub-footer a {
-            color: #a78bfa;
+            color: var(--primary);
             text-decoration: none
         }
 
@@ -1228,7 +1313,7 @@
         }
 
         .select-item:hover {
-            background: rgba(124, 58, 237, .1);
+            background: rgba(var(--primary-rgb), .1);
             color: #fff;
         }
 
@@ -1256,6 +1341,20 @@
             justify-content: center;
             font-size: 1.7rem;
             font-weight: 900;
+            color: #fff;
+            flex-shrink: 0
+        }
+
+        .prof-av-sm {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
             color: #fff;
             flex-shrink: 0
         }
@@ -1304,9 +1403,9 @@
         }
 
         .b-pu {
-            background: rgba(124, 58, 237, .15);
-            border: 1px solid rgba(124, 58, 237, .3);
-            color: #a78bfa
+            background: rgba(var(--primary-rgb), .15);
+            border: 1px solid rgba(var(--primary-rgb), .3);
+            color: var(--primary)
         }
 
         @media(max-width:768px) {
@@ -1418,11 +1517,13 @@
                 signup: 'ابدأ مجاناً',
                 dashboard: 'لوحة التحكم',
                 logout: 'خروج',
-                publicPage: '🌐 الصفحة العامة',
+                publicPage: 'الصفحة العامة',
                 overview: 'نظرة عامة',
                 myLinks: 'روابطي',
                 qrCode: 'رمز QR',
                 profile: 'الملف الشخصي',
+                logoUrl: 'رابط الشعار (URL)',
+                updateLogo: 'تحديث الشعار',
                 welcome: 'مرحباً بـعودتك! سجل الدخول لإدارة روابطك.',
                 welcomeBack: 'مرحباً بعودتك',
                 brandPageCreated: 'تم إنشاء صفحة العلامة التجارية',
@@ -1462,22 +1563,24 @@
                 passTooShort: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل.',
                 slugTaken: 'هذا الرابط مستخدم بالفعل، اختر اسماً آخر.',
                 invalidEmail: 'يرجى إدخال بريد إلكتروني صالح.',
+                forgotPassword: 'نسيت كلمة المرور؟',
+                resetEmailSent: 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.',
+                verifyEmail: 'يرجى التحقق من بريدك الإلكتروني. تم إرسال رابط تفعيل.',
+                emailNotVerified: 'بريدك الإلكتروني غير مفعل بعد. يرجى التحقق من صندوق الوارد.',
+                sendResetLink: 'إرسال رابط إعادة التعيين',
                 platforms: {
                     instagram: 'إنستغرام',
                     twitter: 'تويتر / X',
                     tiktok: 'تيك توك',
                     youtube: 'يوتيوب',
                     facebook: 'فيسبوك',
-                    linkedin: 'لينكد إن',
                     snapchat: 'سناب شات',
-                    pinterest: 'بينتيريست',
-                    github: 'غيت هاب',
                     whatsapp: 'واتساب',
                     telegram: 'تيليغرام',
-                    twitch: 'تويتش',
                     website: 'موقع إلكتروني',
                     emailLink: 'بريد إلكتروني',
-                    other: 'آخر'
+                    phone: 'اتصال هاتفي',
+                    location: 'خرائط جوجل'
                 }
             },
             en: {
@@ -1488,7 +1591,7 @@
                 createBtn: '✨ Create Your Brand Page',
                 viewProfile: '🌐 View My Profile',
                 feat1Title: 'Multiple Links, One URL',
-                feat1Desc: 'Gather Instagram, TikTok, LinkedIn, and any other link in one beautiful page.',
+                feat1Desc: 'Gather Instagram, TikTok, and any other link in one beautiful page.',
                 feat2Title: 'Instant QR Code',
                 feat2Desc: 'Every brand page automatically generates a QR code you can print or download.',
                 feat3Title: 'Easy Editing',
@@ -1500,11 +1603,13 @@
                 signup: 'Start Free',
                 dashboard: 'Dashboard',
                 logout: 'Logout',
-                publicPage: '🌐 Public Page',
+                publicPage: 'Public Page',
                 overview: 'Overview',
                 myLinks: 'My Links',
                 qrCode: 'QR Code',
                 profile: 'Profile',
+                logoUrl: 'Logo URL',
+                updateLogo: 'Update Logo',
                 welcome: 'Welcome back! Login to manage your links.',
                 welcomeBack: 'Welcome back',
                 brandPageCreated: 'Brand page created',
@@ -1544,22 +1649,24 @@
                 passTooShort: 'Password must be at least 6 characters.',
                 slugTaken: 'This link is already taken, choose another.',
                 invalidEmail: 'Please enter a valid email.',
+                forgotPassword: 'Forgot Password?',
+                resetEmailSent: 'A password reset link has been sent to your email.',
+                verifyEmail: 'Please verify your email address. A verification link has been sent.',
+                emailNotVerified: 'Your email is not verified yet. Please check your inbox.',
+                sendResetLink: 'Send Reset Link',
                 platforms: {
                     instagram: 'Instagram',
                     twitter: 'Twitter / X',
                     tiktok: 'TikTok',
                     youtube: 'YouTube',
                     facebook: 'Facebook',
-                    linkedin: 'LinkedIn',
                     snapchat: 'Snapchat',
-                    pinterest: 'Pinterest',
-                    github: 'GitHub',
                     whatsapp: 'WhatsApp',
                     telegram: 'Telegram',
-                    twitch: 'Twitch',
                     website: 'Website',
                     emailLink: 'Email',
-                    other: 'Other'
+                    phone: 'Phone Call',
+                    location: 'Google Maps'
                 }
             }
         };
@@ -1579,17 +1686,43 @@
             return val || key;
         }
 
-        // Initialize direction on load
-        setLang(getLang());
+        // Initialize direction on load (moved to INIT & ROUTES section)
         // ============================================================
         // UTILS
         // ============================================================
+        const ADMIN_EMAILS = ['test@test.com']; // Replace with your admin email
+        function isAdmin(user) { return user && ADMIN_EMAILS.includes(user.email); }
+
+        function hexToRgbStr(hex) {
+            let h = hex.replace(/^#/, '');
+            if (h.length === 3) h = h.split('').map(x => x + x).join('');
+            if (h.length !== 6) return '124, 58, 237';
+            return `${parseInt(h.substring(0, 2), 16)}, ${parseInt(h.substring(2, 4), 16)}, ${parseInt(h.substring(4, 6), 16)}`;
+        }
+
+        function applyTheme(color) {
+            if (!color) color = '#7c3aed';
+            document.documentElement.style.setProperty('--primary', color);
+            document.documentElement.style.setProperty('--primary-rgb', hexToRgbStr(color));
+        }
         function slugify(t) {
             return t.toString().toLowerCase().trim()
                 .replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-')
                 .replace(/^-+/, '').replace(/-+$/, '');
         }
-        function ensureHttp(u) { if (!u) return u; return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
+        function ensureHttp(u, icon = '') {
+            if (!u) return u;
+            const trimmed = u.trim();
+            if (/^(https?|tel|mailto|sms):/i.test(trimmed)) return trimmed;
+            if (icon === 'fa-solid fa-phone') {
+                const clean = trimmed.replace(/[\s()-]/g, '');
+                if (/^\+?\d+$/.test(clean)) return 'tel:' + clean;
+            }
+            if (icon === 'fa-solid fa-envelope') {
+                if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return 'mailto:' + trimmed;
+            }
+            return 'https://' + trimmed;
+        }
         function isEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
         function uid() { return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
@@ -1632,30 +1765,38 @@
         function setUser(u) { u ? sessionStorage.setItem('lb_me', JSON.stringify(u)) : sessionStorage.removeItem('lb_me'); }
 
         async function signup(email, password, brandName) {
-            const slug = slugify(brandName);
+            let slug = slugify(brandName);
             if (!email || !password || !brandName) return { ok: false, err: 'جميع الحقول مطلوبة.' };
             if (password.length < 6) return { ok: false, err: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل.' };
 
             try {
-                // Check if slug is taken in Firestore
-                const snap = await db.collection("brands").where("slug", "==", slug).get();
-                if (!snap.empty) return { ok: false, err: 'هذا الرابط مستخدم بالفعل، اختر اسماً آخر.' };
+                // Auto-resolve slug collision in Firestore
+                let isTaken = true;
+                while (isTaken) {
+                    const snap = await db.collection("brands").where("slug", "==", slug).get();
+                    if (snap.empty) {
+                        isTaken = false;
+                    } else {
+                        slug += '-' + Math.floor(Math.random() * 10000);
+                    }
+                }
 
                 const cred = await auth.createUserWithEmailAndPassword(email, password);
                 const user = cred.user;
 
                 // Save brand info to Firestore
-                await db.collection("brands").doc(user.uid).set({
+                await db.collection("brands").add({
                     brandName,
                     slug,
                     email,
-                    uid: user.uid,
+                    ownerId: user.uid,
                     created: Date.now()
                 });
 
-                const safe = { email, brandName, slug, uid: user.uid };
-                setUser(safe);
-                return { ok: true, user: safe };
+                await user.sendEmailVerification();
+                await auth.signOut();
+
+                return { ok: false, err: t('verifyEmail') };
             } catch (e) {
                 let msg = e.message;
                 if (e.code === 'auth/email-already-in-use') msg = 'البريد الإلكتروني مستخدم بالفعل.';
@@ -1669,13 +1810,19 @@
                 const cred = await auth.signInWithEmailAndPassword(email, password);
                 const user = cred.user;
 
-                // Fetch brand info from Firestore
-                const d = await db.collection("brands").doc(user.uid).get();
-                if (!d.exists) return { ok: false, err: 'المستخدم غير موجود في قاعدة البيانات.' };
+                if (!user.emailVerified) {
+                    await auth.signOut();
+                    return { ok: false, err: t('emailNotVerified') };
+                }
 
-                const brandData = d.data();
-                const safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, uid: user.uid };
+                // Fetch brand info from Firestore
+                const brands = await getUserBrands(user.uid);
+                if (brands.length === 0) return { ok: false, err: 'المستخدم غير موجود في قاعدة البيانات.' };
+
+                const brandData = brands[0];
+                const safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, id: brandData.id, uid: user.uid, logoUrl: brandData.logoUrl, themeColor: brandData.themeColor || '#7c3aed', displayNameAr: brandData.displayNameAr, displayNameEn: brandData.displayNameEn };
                 setUser(safe);
+                applyTheme(safe.themeColor);
                 return { ok: true, user: safe };
             } catch (e) {
                 let msg = e.message;
@@ -1688,29 +1835,35 @@
         async function logout() {
             await auth.signOut();
             setUser(null);
+            applyTheme('#7c3aed');
         }
 
         // Persistent Auth State Handler
         auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                const d = await db.collection("brands").doc(user.uid).get();
-                if (d.exists) {
-                    const brandData = d.data();
-                    setUser({ email: user.email, brandName: brandData.brandName, slug: brandData.slug, uid: user.uid });
+            if (user && user.emailVerified) {
+                const brands = await getUserBrands(user.uid);
+                if (brands.length > 0) {
+                    let me = getCurrentUser();
+                    let brandData = brands.find(b => me && b.slug === me.slug) || brands[0];
+                    const safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, id: brandData.id, uid: user.uid, logoUrl: brandData.logoUrl, themeColor: brandData.themeColor || '#7c3aed', displayNameAr: brandData.displayNameAr, displayNameEn: brandData.displayNameEn };
+                    setUser(safe);
+                    applyTheme(safe.themeColor);
                 }
             } else {
                 setUser(null);
+                applyTheme('#7c3aed');
             }
         });
         async function updateProfile(updates) {
             const me = getCurrentUser(); if (!me) return { ok: false, err: 'Not authenticated.' };
             try {
-                const brandRef = db.collection("brands").doc(me.uid);
+                const brandId = me.id || me.uid;
+                const brandRef = db.collection("brands").doc(brandId);
                 if (updates.brandName) {
                     const ns = slugify(updates.brandName);
-                    // Check slug uniqueness (excluding current user)
+                    // Check slug uniqueness (excluding current brand)
                     const snap = await db.collection("brands").where("slug", "==", ns).get();
-                    if (!snap.empty && snap.docs[0].id !== me.uid) return { ok: false, err: 'اسم العلامة التجارية مستخدم بالفعل.' };
+                    if (!snap.empty && snap.docs[0].id !== brandId) return { ok: false, err: 'اسم العلامة التجارية مستخدم بالفعل.' };
 
                     updates.slug = ns;
                 }
@@ -1718,7 +1871,7 @@
                 await brandRef.update(updates);
                 const d = await brandRef.get();
                 const stored = d.data();
-                const safe = { email: stored.email, brandName: stored.brandName, slug: stored.slug, uid: stored.uid };
+                const safe = { email: me.email, brandName: stored.brandName, slug: stored.slug, id: brandId, uid: me.uid, logoUrl: stored.logoUrl, themeColor: stored.themeColor || '#7c3aed' };
                 setUser(safe);
                 return { ok: true, user: safe };
             } catch (e) {
@@ -1729,10 +1882,29 @@
         // ============================================================
         // DATABASE  (Firestore)
         // ============================================================
+        async function getUserBrands(uid) {
+            try {
+                const snap = await db.collection("brands").where("ownerId", "==", uid).get();
+                let brands = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (brands.length === 0) {
+                    const oldReq = await db.collection("brands").doc(uid).get();
+                    if (oldReq.exists) { brands = [{ id: oldReq.id, ...oldReq.data() }]; }
+                }
+                return brands;
+            } catch (e) {
+                console.error("Error fetching user brands:", e);
+                return [];
+            }
+        }
+
         async function getLinks(slug) {
             try {
                 const snap = await db.collection("links").where("slug", "==", slug).get();
-                return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => b.created - a.created);
+                return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => {
+                    const oA = typeof a.order === 'number' ? a.order : -a.created;
+                    const oB = typeof b.order === 'number' ? b.order : -b.created;
+                    return oA - oB;
+                });
             } catch (e) {
                 console.error("Error fetching links:", e);
                 return [];
@@ -1745,7 +1917,7 @@
                 slug: lnk.slug,
                 ownerId: lnk.ownerId || (me ? me.uid : null),
                 title: lnk.title.trim(),
-                url: ensureHttp(lnk.url.trim()),
+                url: ensureHttp(lnk.url.trim(), lnk.icon),
                 icon: lnk.icon || 'fa-solid fa-link',
                 created: Date.now()
             };
@@ -1756,7 +1928,7 @@
         async function updateLink(id, up) {
             try {
                 const docRef = db.collection("links").doc(id);
-                if (up.url) up.url = ensureHttp(up.url);
+                if (up.url) up.url = ensureHttp(up.url, up.icon);
                 await docRef.update(up);
                 return true;
             } catch (e) {
@@ -1778,7 +1950,7 @@
                 const snap = await db.collection("brands").where("slug", "==", slug).get();
                 if (snap.empty) return null;
                 const u = snap.docs[0].data();
-                return { brandName: u.brandName, slug: u.slug, email: u.email };
+                return { brandName: u.brandName, slug: u.slug, email: u.email, logoUrl: u.logoUrl, themeColor: u.themeColor || '#7c3aed', displayNameAr: u.displayNameAr, displayNameEn: u.displayNameEn };
             } catch { return null; }
         }
 
@@ -1791,19 +1963,28 @@
             { key: 'tiktok', icon: 'fa-brands fa-tiktok', d: 'tiktok.com' },
             { key: 'youtube', icon: 'fa-brands fa-youtube', d: 'youtube.com' },
             { key: 'facebook', icon: 'fa-brands fa-facebook', d: 'facebook.com' },
-            { key: 'linkedin', icon: 'fa-brands fa-linkedin', d: 'linkedin.com' },
             { key: 'snapchat', icon: 'fa-brands fa-snapchat', d: 'snapchat.com' },
-            { key: 'pinterest', icon: 'fa-brands fa-pinterest', d: 'pinterest.com' },
-            { key: 'github', icon: 'fa-brands fa-github', d: 'github.com' },
-            { key: 'whatsapp', icon: 'fa-brands fa-whatsapp', d: 'whatsapp.com' },
+            { key: 'whatsapp', icon: 'fa-brands fa-whatsapp', d: 'wa.me' },
             { key: 'telegram', icon: 'fa-brands fa-telegram', d: 'telegram.me' },
-            { key: 'twitch', icon: 'fa-brands fa-twitch', d: 'twitch.tv' },
             { key: 'website', icon: 'fa-solid fa-globe', d: '' },
             { key: 'emailLink', icon: 'fa-solid fa-envelope', d: 'mailto:' },
-            { key: 'other', icon: 'fa-solid fa-link', d: '' },
+            { key: 'phone', icon: 'fa-solid fa-phone', d: 'tel:' },
+            { key: 'location', icon: 'fa-solid fa-location-dot', d: 'google.com/maps' }
         ];
-        function guessIcon(url) { const l = url.toLowerCase(); for (const p of PLATFORMS) { if (p.d && l.includes(p.d)) return p.icon; } return 'fa-solid fa-link'; }
+        function guessIcon(url) {
+            const l = url.toLowerCase().trim();
+            if (l.startsWith('tel:') || /^\+?[\d\s()-]{7,}$/.test(l)) return 'fa-solid fa-phone';
+            if (l.includes('whatsapp.com') || l.includes('wa.me')) return 'fa-brands fa-whatsapp';
+            if (l.includes('google.com/maps') || l.includes('maps.google.com') || l.includes('maps.app')) return 'fa-solid fa-location-dot';
+            for (const p of PLATFORMS) { if (p.d && l.includes(p.d)) return p.icon; }
+            return 'fa-solid fa-link';
+        }
         function iconHtml(cls) { return `<i class="${cls}"></i>`; }
+        function renderAvatar(brand, cls = 'prof-av') {
+            const init = brand.brandName.charAt(0).toUpperCase();
+            if (brand.logoUrl) return `<img src="${brand.logoUrl}" class="${cls}" style="object-fit:cover" onerror="this.outerHTML='<div class=\'${cls}\'>${init}</div>'"/>`;
+            return `<div class="${cls}">${init}</div>`;
+        }
 
         // Custom Dropdown Helper
         function setupCustomSelect(elId, options, initialVal, onSelect) {
@@ -1957,7 +2138,13 @@
                 return `
 <form id="af" novalidate>
   <div class="form-group"><label class="form-label">${t('email')}</label><input class="form-input" id="ae" type="email" placeholder="you@example.com" autocomplete="username"/></div>
-  <div class="form-group"><label class="form-label">${t('password')}</label><input class="form-input" id="ap" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
+  <div class="form-group">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <label class="form-label">${t('password')}</label>
+        <a id="afpw" style="font-size:0.75rem;cursor:pointer;color:var(--primary);font-weight:600">${t('forgotPassword')}</a>
+    </div>
+    <input class="form-input" id="ap" type="password" placeholder="••••••••" autocomplete="current-password"/>
+  </div>
   <button class="btn btn-p btn-full btn-lg" type="submit" id="asub">${t('login')}</button>
 </form>
 <div class="auth-switch">${t('noAccount')} <a id="asw">${t('createAccount')}</a></div>`;
@@ -1965,8 +2152,6 @@
             function signupForm() {
                 return `
 <form id="af" novalidate>
-  <div class="form-group"><label class="form-label">${t('brandName')}</label><input class="form-input" id="ab" type="text" placeholder="${t('brandPlaceholder')}" maxlength="40"/>
-    <div class="form-helper" id="sp">${t('slugHint')}</div></div>
   <div class="form-group"><label class="form-label">${t('email')}</label><input class="form-input" id="ae" type="email" placeholder="you@example.com" autocomplete="username"/></div>
   <div class="form-group"><label class="form-label">${t('password')}</label><input class="form-input" id="ap" type="password" placeholder="${t('passHint')}" autocomplete="new-password"/></div>
   <button class="btn btn-p btn-full btn-lg" type="submit" id="asub">${t('createBtn')}</button>
@@ -1981,11 +2166,37 @@
                 qAll('.auth-tab').forEach(t_btn => t_btn.addEventListener('click', () => { cur = t_btn.dataset.t; draw(); }));
                 q('#asw')?.addEventListener('click', () => { cur = 'signup'; draw(); });
                 q('#asw2')?.addEventListener('click', () => { cur = 'login'; draw(); });
-                const bInput = q('#ab'), sp = q('#sp');
-                if (bInput && sp) bInput.addEventListener('input', () => {
-                    const s = slugify(bInput.value);
-                    sp.innerHTML = s ? `${t('slugHint').split(' /')[0]} <strong style="color:#a78bfa">/${s}</strong>` : t('slugHint');
+
+                q('#afpw')?.addEventListener('click', () => {
+                    openModal(`🔒 ${t('forgotPassword')}`, body => {
+                        body.innerHTML = `
+                            <div id="pw-alert"></div>
+                            <div class="form-group" style="margin-bottom:1.5rem">
+                                <label class="form-label">${t('email')}</label>
+                                <input class="form-input" id="are" type="email" placeholder="you@example.com"/>
+                            </div>
+                            <button class="btn btn-p btn-full" id="bres">${t('sendResetLink')}</button>
+                        `;
+                        body.querySelector('#bres').onclick = async () => {
+                            const e = body.querySelector('#are').value.trim();
+                            if (!isEmail(e)) { body.querySelector('#pw-alert').innerHTML = `<div class="alert alert-e">❌ ${t('invalidEmail')}</div>`; return; }
+                            try {
+                                const btn = body.querySelector('#bres');
+                                btn.disabled = true; btn.innerText = t('loading');
+                                await auth.sendPasswordResetEmail(e);
+                                closeModal();
+                                toast('📧 ' + t('resetEmailSent'));
+                            } catch (err) {
+                                let m = err.message;
+                                if (err.code === 'auth/user-not-found') m = 'المستخدم غير موجود.';
+                                body.querySelector('#pw-alert').innerHTML = `<div class="alert alert-e">❌ ${m}</div>`;
+                                body.querySelector('#bres').disabled = false; body.querySelector('#bres').innerText = t('sendResetLink');
+                            }
+                        };
+                    });
                 });
+
+                // Live slug preview removed because brand name is auto-generated
                 q('#af').addEventListener('submit', async e => {
                     e.preventDefault();
                     const email = q('#ae')?.value.trim(), pass = q('#ap')?.value;
@@ -1996,8 +2207,7 @@
                         if (r.ok) { toast(`${t('welcomeBack')}, ${r.user.brandName}! 👋`); navigate('/dashboard'); }
                         else showAlert(r.err);
                     } else {
-                        const brand = q('#ab')?.value.trim();
-                        if (!brand) { showAlert(t('fieldsRequired')); return; }
+                        const brand = email.split('@')[0];
                         if (pass.length < 6) { showAlert(t('passTooShort')); return; }
                         setLoading(true); await delay(380);
                         const r = await signup(email, pass, brand); setLoading(false);
@@ -2013,10 +2223,13 @@
         // DASHBOARD
         // ============================================================
         async function renderDashboard(sec) {
-            const me = getCurrentUser(); if (!me) { navigate('/login'); return; }
             let active = sec || 'overview';
+            let me = null;
             async function draw() {
+                me = getCurrentUser(); if (!me) { navigate('/login'); return; }
+                const userBrands = await getUserBrands(me.uid);
                 const l = getLang(), links = await getLinks(me.slug), pUrl = publicUrl(me.slug);
+
                 document.getElementById('app').innerHTML = `
 <div class="bg-orbs" style="opacity:.45"><div class="orb orb1"></div><div class="orb orb2"></div></div>
 <div class="page">
@@ -2024,24 +2237,53 @@
     <div class="nav-brand" id="dl">🔗 LinkBrand</div>
     <div class="nav-actions">
       <button class="btn btn-g btn-sm" id="lang-toggle">${t('langName')}</button>
+      ${isAdmin(me) ? `<button class="btn btn-p btn-sm" id="dadmin" style="background:#ef4444;box-shadow:0 4px 18px rgba(239,68,68,0.4)">👑 Admin</button>` : ''}
       <button class="btn btn-g btn-sm" id="dvp">🌐 ${t('publicPage')}</button>
       <button class="btn btn-g btn-sm" id="dlo">${t('logout')}</button>
     </div>
   </nav>
-  <div class="dash-layout">
-    <aside class="sidebar">
-      <div class="sb-label">${t('dashboard')}</div>
+
+  <div class="dashboard-layout">
+    <!-- Mobile Top Bar for Brand Switching -->
+    <nav class="mobile-top-bar">
+        <div style="flex:1" id="mob-b-switcher"></div>
+        <button class="btn-icon b-new-brand-btn" title="Add Brand" style="font-size:1.2rem;color:var(--primary);margin-left:0.5rem;background:rgba(255,255,255,0.05);border-radius:var(--radius-sm);padding:0.2rem 0.6rem;">+</button>
+    </nav>
+
+    <!-- Desktop Sidebar -->
+    <aside class="desktop-sidebar">
+      <div class="sidebar-section-label" style="display:flex;justify-content:space-between;align-items:center;">
+          ${t('dashboard')}
+          <button class="btn-icon b-new-brand-btn" title="Add Brand" style="font-size:1.2rem;color:var(--primary);margin-top:-0.5rem;padding:0;width:auto;">+</button>
+      </div>
+      <div id="desk-b-switcher" style="margin-bottom: 1.5rem;"></div>
+
       ${['overview', 'links', 'qr', 'profile'].map(s => `
-        <div class="sb-link${active === s ? ' active' : ''}" data-s="${s}">
-          <span class="ic"><i class="${{ overview: 'fa-solid fa-chart-pie', links: 'fa-solid fa-link', qr: 'fa-solid fa-qrcode', profile: 'fa-solid fa-pen' }[s]}"></i></span>
-          ${t(s)}
+        <div class="sidebar-link${active === s ? ' active' : ''}" data-s="${s}">
+          <span class="icon">${s === 'overview' ? '📊' : s === 'links' ? '🔗' : s === 'qr' ? '📱' : '👤'}</span> ${t(s)}
         </div>`).join('')}
-      <div class="sb-profile"><div class="sb-name">${me.brandName}</div><div class="sb-handle">/${me.slug}</div></div>
+
+      <div class="sidebar-profile">
+          ${renderAvatar(me, 'sb-av')}
+          <div style="overflow:hidden">
+              <div class="sidebar-profile-name">${me.brandName}</div>
+              <div class="sidebar-profile-handle">/${me.slug}</div>
+          </div>
+      </div>
     </aside>
-    <main class="main" id="dm">${drawSection(active, links, pUrl, me)}</main>
+
+    <main class="main-content" id="dm">${drawSection(active, links, pUrl, me)}</main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+      ${['overview', 'links', 'qr', 'profile'].map(s => `
+        <div class="bn-item${active === s ? ' active' : ''}" data-s="${s}">
+          <span class="ic">${s === 'overview' ? '📊' : s === 'links' ? '🔗' : s === 'qr' ? '📱' : '👤'}</span> ${t(s)}
+        </div>`).join('')}
+    </nav>
   </div>
 </div>`;
-                bindDash(links, pUrl);
+                bindDash(links, pUrl, userBrands, me);
             }
             function drawSection(s, links, pUrl, me) {
                 if (s === 'overview') return secOverview(links, pUrl, me);
@@ -2050,12 +2292,75 @@
                 if (s === 'profile') return secProfile(me);
                 return secOverview(links, pUrl, me);
             }
-            function bindDash(links, pUrl) {
+            function bindDash(links, pUrl, userBrands, me) {
                 q('#dl').onclick = () => navigate('/');
                 q('#lang-toggle').onclick = () => setLang(getLang() === 'ar' ? 'en' : 'ar');
+                if (q('#dadmin')) q('#dadmin').onclick = () => navigate('/admin');
                 q('#dvp').onclick = () => window.open(pUrl, '_blank');
                 q('#dlo').onclick = async () => { await logout(); toast(t('deleted').replace('الرابط', 'الجلسة'), 'info'); navigate('/'); };
-                qAll('.sb-link[data-s]').forEach(l => l.addEventListener('click', () => { active = l.dataset.s; draw(); }));
+                qAll('.sidebar-link[data-s], .bn-item[data-s]').forEach(l => l.addEventListener('click', () => { active = l.dataset.s; draw(); }));
+
+                // Brand Switcher
+                const brandOptions = userBrands.map(b => ({ value: b.id || b.uid, label: b.brandName, icon: '' }));
+                const currentId = me.id || me.uid;
+                
+                const onBrandSwitch = async (val) => {
+                    if (val !== currentId) {
+                        const selBrand = userBrands.find(b => (b.id || b.uid) === val);
+                        if (selBrand) {
+                            const safe = { email: me.email, brandName: selBrand.brandName, slug: selBrand.slug, id: selBrand.id || selBrand.uid, uid: me.uid, logoUrl: selBrand.logoUrl, themeColor: selBrand.themeColor || '#7c3aed' };
+                            setUser(safe);
+                            applyTheme(safe.themeColor);
+                            renderDashboard(active);
+                        }
+                    }
+                };
+
+                setupCustomSelect('desk-b-switcher', brandOptions, currentId, onBrandSwitch);
+                setupCustomSelect('mob-b-switcher', brandOptions, currentId, onBrandSwitch);
+
+                // New Brand Modal
+                qAll('.b-new-brand-btn').forEach(btn => btn.addEventListener('click', () => {
+                    openModal('➕ Create New Brand', body => {
+                        body.innerHTML = `
+                            <div id="nb-alert"></div>
+                            <div class="form-group"><label class="form-label">${t('brandName')}</label><input class="form-input" id="nb-name" type="text" placeholder="${t('brandPlaceholder')}" maxlength="40"/>
+                                <div class="form-helper" id="nb-sp">${t('slugHint')}</div></div>
+                            <button class="btn btn-p btn-full" id="nb-sub">${t('createBtn')}</button>
+                        `;
+                        const bInput = body.querySelector('#nb-name'), sp = body.querySelector('#nb-sp');
+                        if (bInput && sp) bInput.addEventListener('input', () => {
+                            const s = slugify(bInput.value);
+                            sp.innerHTML = s ? `${t('slugHint').split(' /')[0]} <strong style="color:#a78bfa">/${s}</strong>` : t('slugHint');
+                        });
+                        body.querySelector('#nb-sub').onclick = async () => {
+                            const name = bInput.value.trim();
+                            const slug = slugify(name);
+                            if (!name) { body.querySelector('#nb-alert').innerHTML = `<div class="alert alert-e">❌ ${t('fieldsRequired')}</div>`; return; }
+
+                            const btn = body.querySelector('#nb-sub');
+                            btn.disabled = true; btn.innerText = t('loading');
+
+                            try {
+                                const snap = await db.collection("brands").where("slug", "==", slug).get();
+                                if (!snap.empty) { throw new Error(t('slugTaken')); }
+
+                                const newBrand = { brandName: name, slug, email: me.email, ownerId: me.uid, created: Date.now() };
+                                const docRef = await db.collection("brands").add(newBrand);
+
+                                const safe = { email: me.email, brandName: name, slug, id: docRef.id, uid: me.uid, themeColor: '#7c3aed' };
+                                setUser(safe);
+                                applyTheme('#7c3aed');
+                                closeModal();
+                                toast(t('brandPageCreated') + '! 🎉', 'ok');
+                                renderDashboard('overview');
+                            } catch (err) {
+                                body.querySelector('#nb-alert').innerHTML = `<div class="alert alert-e">❌ ${err.message}</div>`;
+                                btn.disabled = false; btn.innerText = t('createBtn');
+                            }
+                        };
+                    });
+                }));
                 if (active === 'overview') {
                     q('#ocopy')?.addEventListener('click', () => { navigator.clipboard.writeText(pUrl).then(() => toast(t('linkCopied'))); });
                     q('#ogo')?.addEventListener('click', () => { active = 'links'; draw(); });
@@ -2071,6 +2376,45 @@
                             await draw();
                         }
                     }));
+
+                    const list = q('.links-list');
+                    if (list) {
+                        let draggedItem = null;
+                        list.addEventListener('dragstart', e => {
+                            draggedItem = e.target.closest('.link-item');
+                            if (draggedItem) {
+                                setTimeout(() => draggedItem.style.opacity = '0.4', 0);
+                            }
+                        });
+                        list.addEventListener('dragend', e => {
+                            if (draggedItem) draggedItem.style.opacity = '1';
+                            draggedItem = null;
+                        });
+                        list.addEventListener('dragover', e => {
+                            e.preventDefault();
+                            const dest = e.target.closest('.link-item');
+                            if (dest && dest !== draggedItem && draggedItem) {
+                                const rect = dest.getBoundingClientRect();
+                                const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+                                list.insertBefore(draggedItem, next ? dest.nextSibling : dest);
+                            }
+                        });
+                        list.addEventListener('drop', async e => {
+                            e.preventDefault();
+                            if (!draggedItem) return;
+                            if (draggedItem) draggedItem.style.opacity = '1';
+                            const items = Array.from(list.querySelectorAll('.link-item'));
+                            try {
+                                const batch = db.batch();
+                                items.forEach((item, index) => {
+                                    const linkRef = db.collection("links").doc(item.dataset.id);
+                                    batch.update(linkRef, { order: index });
+                                });
+                                await batch.commit();
+                                toast(t('updated'));
+                            } catch (err) { }
+                        });
+                    }
                 }
                 if (active === 'qr') {
                     makeQR('qrmain', pUrl, 200);
@@ -2078,11 +2422,56 @@
                     q('#qcopy').onclick = () => { navigator.clipboard.writeText(pUrl).then(() => toast(t('linkCopied'))); };
                 }
                 if (active === 'profile') {
+                    const fileIn = q('#plogo-file');
+                    const colorIn = q('#ptheme');
+                    const preview = q('#plogo-preview');
+                    let currentBase64 = me.logoUrl || '';
+
+                    fileIn?.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                const MAX_SIZE = 256;
+                                let w = img.width, h = img.height;
+                                if (w > h) { if (w > MAX_SIZE) { h *= MAX_SIZE / w; w = MAX_SIZE; } }
+                                else { if (h > MAX_SIZE) { w *= MAX_SIZE / h; h = MAX_SIZE; } }
+                                canvas.width = w; canvas.height = h;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, w, h);
+                                currentBase64 = canvas.toDataURL('image/webp', 0.8);
+                                preview.innerHTML = `<img src="${currentBase64}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-sm)" />`;
+                            };
+                            img.src = ev.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+
                     q('#psave').addEventListener('click', async () => {
                         const bn = q('#pbn').value.trim();
+                        const dnAr = q('#pdn-ar').value.trim();
+                        const dnEn = q('#pdn-en').value.trim();
+                        const tc = colorIn?.value || '#7c3aed';
                         if (!bn) { toast(t('fieldsRequired'), 'er'); return; }
-                        const r = await updateProfile({ brandName: bn });
-                        if (r.ok) { toast(`${t('updated')} ✨`); draw(); }
+
+                        const btn = q('#psave');
+                        const origText = btn.innerText;
+                        btn.innerText = t('loading');
+                        btn.disabled = true;
+
+                        const r = await updateProfile({ brandName: bn, displayNameAr: dnAr, displayNameEn: dnEn, logoUrl: currentBase64, themeColor: tc });
+
+                        btn.innerText = origText;
+                        btn.disabled = false;
+
+                        if (r.ok) {
+                            applyTheme(tc);
+                            toast(`${t('updated')} ✨`);
+                            draw();
+                        }
                         else toast(r.err, 'er');
                     });
                 }
@@ -2103,8 +2492,8 @@
             function linkForm(lnk) {
                 return `<div id="lfa"></div>
 <div class="form-group"><label class="form-label">${t('linkTitle')}</label><input class="form-input" id="lft" placeholder="${t('brandPlaceholder')}" value="${lnk ? lnk.title : ''}" maxlength="50"/></div>
-<div class="form-group"><label class="form-label">${t('linkUrl')}</label><input class="form-input" id="lfu" placeholder="https://…" value="${lnk ? lnk.url : ''}"/></div>
 <div class="form-group"><label class="form-label">${t('linkIcon')}</label><div id="custom-icon-select"></div><input type="hidden" id="lfi" value="${lnk ? lnk.icon : PLATFORMS[0].icon}"/></div>
+<div class="form-group"><label class="form-label">${t('linkUrl')}</label><input class="form-input" id="lfu" placeholder="https://…" value="${lnk ? lnk.url : ''}"/></div>
 <div style="display:flex;gap:.7rem;justify-content:flex-end;margin-top:1rem">
   <button class="btn btn-g" id="lfcan">${t('cancel')}</button>
   <button class="btn btn-p" id="lfsav">${lnk ? t('saveChanges') : t('addLink')}</button>
@@ -2114,17 +2503,86 @@
                 body.querySelector('#lfcan').onclick = closeModal;
                 const uEl = body.querySelector('#lfu'), iHidden = body.querySelector('#lfi');
 
+                function applyPlatformPrefix(uEl, selectedIcon) {
+                    const val = uEl.value.trim();
+                    const plat = PLATFORMS.find(p => p.icon === selectedIcon);
+                    if (!plat) return;
+
+                    function isExistingUrl(str) {
+                        return /^(https?:\/\/|mailto:|tel:)/i.test(str) || str.includes('.');
+                    }
+
+                    function getPlatformOfUrl(str) {
+                        const s = str.toLowerCase();
+                        if (s.startsWith('tel:')) return PLATFORMS.find(p => p.key === 'phone');
+                        if (s.startsWith('mailto:')) return PLATFORMS.find(p => p.key === 'emailLink');
+                        if (s.includes('whatsapp.com')) return PLATFORMS.find(p => p.key === 'whatsapp');
+                        if (s.includes('google.com/maps') || s.includes('maps.google.com') || s.includes('maps.app')) return PLATFORMS.find(p => p.key === 'location');
+                        for (const p of PLATFORMS) {
+                            if (p.d && s.includes(p.d)) return p;
+                        }
+                        return null;
+                    }
+
+                    const currentPlat = getPlatformOfUrl(val);
+                    const isCustomUrl = !currentPlat && isExistingUrl(val);
+
+                    let handle = val;
+                    if (currentPlat) {
+                        if (currentPlat.key === 'phone') {
+                            handle = val.substring(4);
+                        } else if (currentPlat.key === 'emailLink') {
+                            handle = val.substring(7);
+                        } else if (currentPlat.d) {
+                            let dom = currentPlat.d;
+                            if (currentPlat.key === 'whatsapp' && val.includes('whatsapp.com')) {
+                                dom = 'whatsapp.com';
+                            } else if (currentPlat.key === 'location') {
+                                if (val.includes('maps.google.com')) dom = 'maps.google.com';
+                                else if (val.includes('maps.app')) dom = 'maps.app';
+                                else dom = 'google.com/maps';
+                            }
+                            const idx = val.toLowerCase().indexOf(dom) + dom.length;
+                            handle = val.substring(idx);
+                        }
+                        handle = handle.replace(/^[/\s@]+/, '');
+                    } else if (isCustomUrl) {
+                        handle = '';
+                    } else {
+                        handle = handle.replace(/^[/\s@]+/, '');
+                    }
+
+                    if (plat.key === 'phone') {
+                        const clean = handle.replace(/[^\d+]/g, '');
+                        uEl.value = 'tel:' + clean;
+                    } else if (plat.key === 'emailLink') {
+                        uEl.value = 'mailto:' + handle;
+                    } else if (plat.d) {
+                        uEl.value = `https://${plat.d}/${handle}`;
+                    } else {
+                        if (isCustomUrl) {
+                            uEl.value = val;
+                        } else if (handle) {
+                            uEl.value = handle.startsWith('http') ? handle : 'https://' + handle;
+                        } else {
+                            uEl.value = '';
+                        }
+                    }
+                }
+
                 // Initialize Custom Select
                 setupCustomSelect('custom-icon-select', PLATFORMS.map(p => ({ label: t('platforms.' + p.key), value: p.icon, icon: p.icon })), iHidden.value, (val) => {
                     iHidden.value = val;
+                    applyPlatformPrefix(uEl, val);
                 });
 
                 uEl.addEventListener('blur', () => {
                     const g = guessIcon(uEl.value);
                     if (g !== 'fa-solid fa-link') {
                         iHidden.value = g;
-                        setupCustomSelect('custom-icon-select', PLATFORMS.map(p => ({ label: t('platforms.' + (PLATFORMS.find(px => px.icon === g)?.key || 'other')), value: p.icon, icon: p.icon })), g, (val) => {
+                        setupCustomSelect('custom-icon-select', PLATFORMS.map(p => ({ label: t('platforms.' + p.key), value: p.icon, icon: p.icon })), g, (val) => {
                             iHidden.value = val;
+                            applyPlatformPrefix(uEl, val);
                         });
                     }
                 });
@@ -2149,27 +2607,83 @@
 
         // ---- Section HTML builders ----
         function secOverview(links, pUrl, me) {
+            const shortUrl = pUrl.replace(/^https?:\/\//, '').replace(/.*index\.html#\//, 'linkbrand.io/').replace(/.*:\d+\/#\//, 'linkbrand.io/').replace(/\/p\//, '/');
             return `
-<div class="sec-header"><div><div class="sec-title">${getLang() === 'ar' ? '👋 مرحباً' : '👋 Welcome'}, ${me.brandName}</div><div class="sec-sub">${t('heroSub').split('.')[0]}.</div></div>
-<button class="btn btn-p" id="ogo">+ ${t('addLink')}</button></div>
-<div class="p-grid">
-  <div class="card">
-    <div style="display:flex;gap:1.5rem;margin-bottom:1.3rem">
-      <div><div class="stat-val">${links.length}</div><div class="stat-lbl">${t('myLinks')}</div></div>
-      <div><div class="stat-val">1</div><div class="stat-lbl">${t('qrCode')}</div></div>
-    </div>
-    <div class="form-label" style="margin-bottom:.4rem">${t('copyLink').replace('📋 ', '')}</div>
-    <div class="qr-url" style="margin-bottom:.7rem">🌐 <span dir="ltr">${pUrl}</span></div>
-    <button class="btn btn-g btn-sm" id="ocopy">${t('copyLink')}</button>
+<div class="sec-header" style="margin-bottom:2rem">
+  <div>
+    <div class="sec-title">${getLang() === 'ar' ? '👋 مرحباً' : '👋 Welcome'}, ${me.brandName}</div>
+    <div class="sec-sub">${t('heroSub').split('.')[0]}.</div>
   </div>
-  <div class="card">
-    <div class="form-label" style="margin-bottom:.9rem;text-align:center">${t('qrCode')}</div>
-    <div class="qr-wrap"><div class="qr-box" id="oqr"></div></div>
+  <button class="btn btn-p" id="ogo" style="box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);">+ ${t('addLink')}</button>
+</div>
+
+<!-- Stats Grid -->
+<div class="profile-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+  <div class="card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem;">
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(124, 58, 237, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary);">🔗</div>
+    <div>
+      <div style="font-size: 1.8rem; font-weight: 800; line-height: 1;">${links.length}</div>
+      <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.25rem;">${t('myLinks')}</div>
+    </div>
+  </div>
+  <div class="card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem;">
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #10b981;">👁️</div>
+    <div>
+      <div style="font-size: 1.8rem; font-weight: 800; line-height: 1;">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.25rem;">Page Views</div>
+    </div>
+  </div>
+  <div class="card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem;">
+    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #f59e0b;">🖱️</div>
+    <div>
+      <div style="font-size: 1.8rem; font-weight: 800; line-height: 1;">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.25rem;">Link Clicks</div>
+    </div>
   </div>
 </div>
-${links.length ? `<div class="card"><div class="sec-header" style="margin-bottom:.9rem"><div class="sec-title" style="font-size:.98rem">${t('myLinks')}</div><span class="badge b-pu">${links.length} ${getLang() === 'ar' ? 'نشط' : 'Active'}</span></div>
-<div class="links-list">${links.slice(0, 3).map(l => `<div class="link-item"><div class="li-icon">${iconHtml(l.icon)}</div><div class="li-info"><div class="li-title">${l.title}</div><div class="li-url" dir="ltr">${l.url}</div></div></div>`).join('')}</div></div>`
-                    : `<div class="card"><div class="empty"><div class="empty-icon">🔗</div><div class="empty-title">${t('noAccount').replace('?', '')}</div><div>${t('feat1Desc')}</div><button class="btn btn-p" id="ogo" style="margin-top:.5rem">+ ${t('addLink')}</button></div></div>`}
+
+<div class="profile-grid" style="margin-bottom:2rem; align-items: stretch;">
+  <!-- Share Section -->
+  <div class="card" style="display:flex;flex-direction:column;gap:1.5rem">
+    <div>
+        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Share Your Page</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Copy your unique link to share with your audience.</div>
+    </div>
+    <div style="background:rgba(0,0,0,0.2); border-radius:var(--radius-md); padding:0.5rem; border:1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 0.5rem;">
+        <div style="flex:1; padding: 0.5rem; font-size: 0.9rem; color: var(--text-primary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" dir="ltr">${shortUrl}</div>
+        <button class="btn btn-p" id="ocopy" style="padding: 0.6rem 1rem; font-size: 0.85rem; flex-shrink: 0;">${t('copyLink')}</button>
+    </div>
+    
+    <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.85rem; color: var(--text-muted);">${getLang() === 'ar' ? 'قم بزيارة صفحتك:' : 'Visit your page:'}</div>
+        <a href="${pUrl}" target="_blank" style="color: var(--primary); font-weight: 600; font-size: 0.9rem; text-decoration: none;">linkbrand.io/${me.slug} ↗</a>
+    </div>
+  </div>
+
+  <!-- QR Section -->
+  <div class="card" style="display:flex;flex-direction:row;align-items:center;gap:2rem;">
+    <div class="qr-box" id="oqr" style="padding:12px;border-radius:12px;background:#fff;flex-shrink:0;"></div>
+    <div>
+        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">QR Code</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">${getLang() === 'ar' ? 'امسح هذا الرمز لزيارة صفحتك مباشرة' : 'Scan this code to instantly visit your brand page. You can download it from the QR tab.'}</div>
+    </div>
+  </div>
+</div>
+
+${links.length ? `<div class="card">
+  <div class="sec-header" style="margin-bottom:1.2rem">
+    <div class="sec-title" style="font-size:1.1rem">${t('myLinks')}</div>
+    <span class="badge b-pu" style="font-size:.8rem;padding:.3rem .8rem">${links.length} ${getLang() === 'ar' ? 'نشط' : 'Active'}</span>
+  </div>
+  <div class="links-list">
+    ${links.slice(0, 3).map(l => {
+      const plat = PLATFORMS.find(p => p.icon === l.icon);
+      const brandCls = plat ? `pl-${plat.key}` : '';
+      return `<div class="link-item ${brandCls}" style="padding:1rem 1.2rem;transition:transform 0.2s ease, border-color 0.2s ease;"><div class="li-icon" style="font-size:1.3rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm)">${iconHtml(l.icon)}</div><div class="li-info"><div class="li-title" style="font-size:1rem;margin-bottom:4px;font-weight:600">${l.title}</div><div class="li-url" dir="ltr" style="font-size:.85rem;color:var(--text-muted)">${l.url}</div></div></div>`;
+    }).join('')}
+  </div>
+</div>`
+: `<div class="card"><div class="empty" style="padding:3.5rem 1rem"><div class="empty-icon" style="font-size:3.5rem;margin-bottom:1.2rem;opacity:0.8">🔗</div><div class="empty-title" style="font-size:1.35rem;margin-bottom:.5rem;font-weight:700">${t('noAccount').replace('?', '')}</div><div style="color:var(--text-muted);margin-bottom:1.8rem;font-size:.95rem;max-width:300px;margin-left:auto;margin-right:auto">${t('feat1Desc')}</div><button class="btn btn-p btn-lg" id="ogo" style="padding:.9rem 2rem;font-weight:600;font-size:.95rem">+ ${t('addLink')}</button></div></div>`}
 `;
         }
 
@@ -2179,15 +2693,20 @@ ${links.length ? `<div class="card"><div class="sec-header" style="margin-bottom
 <button class="btn btn-p" id="badd">+ ${t('addLink')}</button></div>
 <div class="card">
 ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><div class="empty-title">${t('noAccount').replace('?', '')}</div><div>${t('addLink')}</div></div>`
-                    : `<div class="links-list">${links.map(l => `
-<div class="link-item">
+                    : `<div class="links-list">${links.map(l => {
+    const plat = PLATFORMS.find(p => p.icon === l.icon);
+    const brandCls = plat ? `pl-${plat.key}` : '';
+    return `
+<div class="link-item ${brandCls}" draggable="true" data-id="${l.id}" style="cursor:grab">
+  <div class="li-drag-handle" style="opacity:0.5;font-size:1.1rem"><i class="fa-solid fa-grip-vertical"></i></div>
   <div class="li-icon">${iconHtml(l.icon)}</div>
   <div class="li-info"><div class="li-title">${l.title}</div><div class="li-url" dir="ltr">${l.url}</div></div>
   <div class="li-actions">
     <button class="btn btn-g btn-sm bedit" data-id="${l.id}">✏️</button>
     <button class="btn-icon bdel" data-id="${l.id}" title="${t('deleteLink')}">🗑</button>
   </div>
-</div>`).join('')}</div>`}
+</div>`;
+}).join('')}</div>`}
 </div>`;
         }
 
@@ -2206,18 +2725,49 @@ ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><di
         }
 
         function secProfile(me) {
+            const currentTheme = me.themeColor || '#7c3aed';
             return `
-<div class="sec-header"><div><div class="sec-title">✏️ ${t('updateProfile')}</div><div class="sec-sub">${t('brandName')}</div></div></div>
-<div class="card" style="max-width:500px">
-  <div class="prof-pic-row">
-    <div class="prof-av">${me.brandName.charAt(0).toUpperCase()}</div>
-    <div><div class="prof-name">${me.brandName}</div><div class="prof-email" dir="ltr">${me.email}</div></div>
+<div class="sec-header" style="margin-bottom:1.5rem"><div><div class="sec-title">✏️ ${t('updateProfile')}</div><div class="sec-sub">${t('brandName')}</div></div></div>
+<div class="card" style="max-width:560px;padding:2rem">
+  <div class="prof-pic-row" style="display:flex;align-items:center;gap:1.5rem">
+    <div id="plogo-preview" style="width:72px;height:72px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;color:#fff;background:linear-gradient(135deg, var(--primary), #a78bfa);flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,0.2)">
+        ${me.logoUrl ? `<img src="${me.logoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/>` : me.brandName.charAt(0).toUpperCase()}
+    </div>
+    <div style="flex-grow:1">
+        <label class="btn btn-g btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem">
+            📸 ${getLang() === 'ar' ? 'رفع الشعار' : 'Upload Logo'}
+            <input type="file" id="plogo-file" accept="image/png, image/jpeg, image/webp" style="display:none" />
+        </label>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem">${getLang() === 'ar' ? 'ينصح بصورة مربعة (JPG, PNG)' : 'Square image recommended (JPG, PNG)'}</div>
+    </div>
   </div>
-  <div class="divider" style="margin-bottom:1.15rem"></div>
-  <div class="form-group"><label class="form-label">${t('brandName')}</label><input class="form-input" id="pbn" value="${me.brandName}" maxlength="40"/>
-    <div class="form-helper">${t('slugHint')}</div></div>
-  <div class="form-group"><label class="form-label">${t('email')}</label><input class="form-input" value="${me.email}" disabled dir="ltr"/><div class="form-helper">${t('email')}</div></div>
-  <div style="margin-top:1.1rem"><button class="btn btn-p" id="psave">${t('saveChanges')}</button></div>
+  <div class="divider" style="margin:1.8rem 0;background:var(--border);height:1px"></div>
+  <div class="form-group" style="margin-bottom:1.4rem">
+    <label class="form-label" style="font-size:0.85rem;margin-bottom:0.5rem;display:block;color:var(--text2)">${t('brandName')}</label>
+    <input class="form-input" id="pbn" value="${me.brandName}" maxlength="40" style="padding:0.9rem;font-size:1rem"/>
+    <div class="form-helper" style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem">${t('slugHint')}</div>
+  </div>
+  <div class="form-group" style="margin-bottom:1.4rem">
+    <label class="form-label" style="font-size:0.85rem;margin-bottom:0.5rem;display:block;color:var(--text2)">${getLang() === 'ar' ? 'الاسم المعروض (عربي)' : 'Display Name (Arabic)'}</label>
+    <input class="form-input" id="pdn-ar" value="${me.displayNameAr || ''}" maxlength="40" style="padding:0.9rem;font-size:1rem" placeholder="${getLang() === 'ar' ? 'الاسم الذي سيظهر للزوار' : 'Arabic name shown to visitors'}"/>
+  </div>
+  <div class="form-group" style="margin-bottom:1.4rem">
+    <label class="form-label" style="font-size:0.85rem;margin-bottom:0.5rem;display:block;color:var(--text2)">${getLang() === 'ar' ? 'الاسم المعروض (انجليزي)' : 'Display Name (English)'}</label>
+    <input class="form-input" id="pdn-en" value="${me.displayNameEn || ''}" maxlength="40" style="padding:0.9rem;font-size:1rem" placeholder="${getLang() === 'ar' ? 'English name shown to visitors' : 'English name shown to visitors'}" dir="ltr"/>
+  </div>
+  <div class="form-group" style="margin-bottom:1.4rem">
+    <label class="form-label" style="font-size:0.85rem;margin-bottom:0.5rem;display:block;color:var(--text2)">${getLang() === 'ar' ? 'لون العلامة التجارية' : 'Brand Theme Color'}</label>
+    <div style="display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,0.03);padding:0.5rem;border-radius:var(--r-sm);border:1px solid var(--border)">
+        <input type="color" id="ptheme" value="${currentTheme}" style="width:40px;height:40px;padding:0;border:none;border-radius:8px;cursor:pointer;background:transparent" />
+        <span style="font-size:0.9rem;font-family:monospace;color:var(--text2)">${getLang() === 'ar' ? 'اختر اللون الرئيسي' : 'Choose primary color'}</span>
+    </div>
+  </div>
+  <div class="form-group" style="margin-bottom:2rem">
+    <label class="form-label" style="font-size:0.85rem;margin-bottom:0.5rem;display:block;color:var(--text2)">${t('email')}</label>
+    <input class="form-input" value="${me.email}" disabled dir="ltr" style="opacity:0.5;padding:0.9rem;font-size:1rem;background:rgba(0,0,0,0.2)"/>
+    <div class="form-helper" style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem">${t('email')}</div>
+  </div>
+  <div><button class="btn btn-p" id="psave" style="width:100%;padding:1rem;font-size:1rem;font-weight:600">${t('saveChanges')}</button></div>
 </div>`;
         }
 
@@ -2229,6 +2779,11 @@ ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><di
             if (!brand) { renderNotFound(slug); return; }
             const links = await getLinks(slug), pUrl = publicUrl(slug), init = brand.brandName.charAt(0).toUpperCase();
             const l = getLang();
+            const displayName = l === 'ar' ? (brand.displayNameAr || brand.brandName) : (brand.displayNameEn || brand.brandName);
+
+            // Apply custom theme for this brand page
+            applyTheme(brand.themeColor);
+
             document.getElementById('app').innerHTML = `
 <div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
 <div class="page">
@@ -2242,15 +2797,20 @@ ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><di
   <div class="pub-page">
     <div class="pub-card">
       <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:.7rem">
-        <div class="pub-avatar">${init}</div>
-        <div><div class="pub-brand">${brand.brandName}</div><div class="pub-handle" dir="ltr">/${slug}</div></div>
+        ${renderAvatar(brand, 'pub-avatar')}
+        <div><div class="pub-brand">${displayName}</div><div class="pub-handle" dir="ltr">/${slug}</div></div>
       </div>
-      ${links.length ? `<div class="pub-links">${links.map(lx => `
-        <a class="pub-link" href="${lx.url}" target="_blank" rel="noopener noreferrer">
+      ${links.length ? `<div class="pub-links">${links.map(lx => {
+                const isHttp = /^https?:\/\//i.test(lx.url);
+                const plat = PLATFORMS.find(p => p.icon === lx.icon);
+                const brandCls = plat ? `pl-${plat.key}` : '';
+                return `
+        <a class="pub-link ${brandCls}" href="${lx.url}" ${isHttp ? 'target="_blank" rel="noopener noreferrer"' : ''}>
           <span class="pub-link-icon">${iconHtml(lx.icon)}</span>
           <span class="pub-link-name">${lx.title}</span>
           <span class="pub-link-arr">›</span>
-        </a>`).join('')}</div>`
+        </a>`;
+            }).join('')}</div>`
                     : `<div style="text-align:center;color:var(--muted);font-size:.88rem;padding:1.5rem 0">${t('noAccount').replace('?', '')}</div>`}
       <div class="pub-qr">
         <div class="pub-qr-lbl">${t('qrScan')}</div>
@@ -2286,6 +2846,108 @@ ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><di
         }
 
         // ============================================================
+        // ADMIN DASHBOARD
+        // ============================================================
+        async function renderAdmin(sec) {
+            const me = getCurrentUser(); if (!me || !isAdmin(me)) { navigate('/dashboard'); return; }
+            let active = sec || 'overview';
+
+            async function draw() {
+                document.getElementById('app').innerHTML = `
+<div class="bg-orbs" style="opacity:.2"><div class="orb orb1"></div></div>
+<div class="page" style="max-width:1400px">
+  <nav class="nav">
+    <div class="nav-brand" id="al">👑 Admin Control</div>
+    <div class="nav-actions">
+      <button class="btn btn-g btn-sm" id="adash">← ${t('dashboard')}</button>
+    </div>
+  </nav>
+  <div class="dash-layout">
+    <aside class="sidebar" style="width:240px">
+      <div class="sb-label">Admin System</div>
+      ${['overview', 'brands', 'links'].map(s => `
+        <div class="sb-link${active === s ? ' active' : ''}" data-s="${s}">
+          <span class="ic">${s === 'overview' ? '📊' : s === 'brands' ? '🏢' : '🔗'}</span> ${s.charAt(0).toUpperCase() + s.slice(1)}
+        </div>`).join('')}
+    </aside>
+    <main class="main" id="am">
+       <div class="card"><div style="text-align:center;padding:2rem"><span class="spin"></span> Loading data...</div></div>
+    </main>
+  </div>
+</div>`;
+                bindAdminNav();
+                await loadAdminData(active);
+            }
+
+            function bindAdminNav() {
+                q('#al').onclick = () => navigate('/admin');
+                q('#adash').onclick = () => navigate('/dashboard');
+                qAll('.sb-link[data-s]').forEach(l => l.addEventListener('click', () => { active = l.dataset.s; draw(); }));
+            }
+
+            async function loadAdminData(s) {
+                const main = q('#am');
+                if (s === 'overview') {
+                    // Quick counts
+                    try {
+                        const brandsSnap = await db.collection("brands").get();
+                        const linksSnap = await db.collection("links").get();
+                        main.innerHTML = `
+                        <div class="sec-header" style="margin-bottom:1.5rem"><div><div class="sec-title">System Overview</div></div></div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1.5rem">
+                            <div class="card" style="text-align:center"><h2>${brandsSnap.size}</h2><p style="color:var(--muted)">Total Brands</p></div>
+                            <div class="card" style="text-align:center"><h2>${linksSnap.size}</h2><p style="color:var(--muted)">Total Links</p></div>
+                        </div>`;
+                    } catch (e) { main.innerHTML = `<div class="alert alert-e">Error: ${e.message}</div>`; }
+                }
+                else if (s === 'brands') {
+                    try {
+                        const snap = await db.collection("brands").get();
+                        const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.created || 0) - (a.created || 0));
+                        const html = docs.map(b => {
+                            return `<div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid var(--border)">
+                                <div><strong>${b.brandName}</strong> <span style="color:var(--muted);font-size:0.8rem">/${b.slug}</span></div>
+                                <div style="font-size:0.8rem">${b.email}</div>
+                                <button class="btn btn-g btn-sm bdel" data-id="${b.id}">Delete</button>
+                            </div>`;
+                        }).join('') || '<div style="padding:1rem;text-align:center">No brands found.</div>';
+
+                        main.innerHTML = `<div class="sec-header" style="margin-bottom:1.5rem"><div><div class="sec-title">All Brands</div></div></div><div class="card" style="padding:0">${html}</div>`;
+                        main.querySelectorAll('.bdel').forEach(btn => btn.onclick = async () => {
+                            if (confirm('Delete this brand permanently? This will not delete their auth layer, just the page metadata.')) {
+                                await db.collection("brands").doc(btn.dataset.id).delete();
+                                loadAdminData('brands');
+                            }
+                        });
+                    } catch (e) { main.innerHTML = `<div class="alert alert-e">Error loading brands. ${e.message}</div>`; }
+                }
+                else if (s === 'links') {
+                    try {
+                        // Grab all and local-sort
+                        const snap = await db.collection("links").get();
+                        const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.created || 0) - (a.created || 0));
+                        const html = docs.map(l => {
+                            return `<div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid var(--border)">
+                                <div><strong>${l.title}</strong> <span style="color:var(--muted);font-size:0.8rem">(${l.slug})</span></div>
+                                <div style="font-size:0.8rem;max-width:300px;overflow:hidden;text-overflow:ellipsis" dir="ltr"><a href="${l.url}" target="_blank" style="color:var(--primary)">${l.url}</a></div>
+                                <button class="btn btn-g btn-sm btn-del-link" data-id="${l.id}">Delete</button>
+                            </div>`;
+                        }).join('') || '<div style="padding:1rem;text-align:center">No links found.</div>';
+
+                        main.innerHTML = `<div class="sec-header" style="margin-bottom:1.5rem"><div><div class="sec-title">All Links</div></div></div><div class="card" style="padding:0">${html}</div>`;
+                        main.querySelectorAll('.btn-del-link').forEach(btn => btn.onclick = async () => {
+                            if (confirm('Delete this link permanently?')) {
+                                await db.collection("links").doc(btn.dataset.id).delete();
+                                loadAdminData('links');
+                            }
+                        });
+                    } catch (e) { main.innerHTML = `<div class="alert alert-e">Error loading links. ${e.message}</div>`; }
+                }
+            }
+            await draw();
+        }
+
+        // ============================================================
         // HELPERS
         // ============================================================
         function q(sel) { return document.querySelector(sel); }
@@ -2294,10 +2956,12 @@ ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><di
         // ============================================================
         // INIT & ROUTES
         // ============================================================
+        setLang(getLang());
         addRoute('/', async () => await renderLanding());
         addRoute('/login', async () => await renderAuth('login'));
         addRoute('/signup', async () => await renderAuth('signup'));
         addRoute('/dashboard', async () => { const me = getCurrentUser(); me ? await renderDashboard('overview') : navigate('/login'); });
+        addRoute('/admin', async () => { const me = getCurrentUser(); isAdmin(me) ? await renderAdmin('overview') : navigate('/dashboard'); });
         // Catch-all for public profiles: /p/:slug
         addRoute(/^\/p\/([a-z0-9-]+)$/i, async m => await renderPublic(m[1]));
         // Legacy: /:slug direct
