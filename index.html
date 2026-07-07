@@ -1764,34 +1764,13 @@
         function getCurrentUser() { try { return JSON.parse(sessionStorage.getItem('lb_me')) || null; } catch { return null; } }
         function setUser(u) { u ? sessionStorage.setItem('lb_me', JSON.stringify(u)) : sessionStorage.removeItem('lb_me'); }
 
-        async function signup(email, password, brandName) {
-            let slug = slugify(brandName);
-            if (!email || !password || !brandName) return { ok: false, err: 'جميع الحقول مطلوبة.' };
+        async function signup(email, password) {
+            if (!email || !password) return { ok: false, err: 'جميع الحقول مطلوبة.' };
             if (password.length < 6) return { ok: false, err: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل.' };
 
             try {
-                // Auto-resolve slug collision in Firestore
-                let isTaken = true;
-                while (isTaken) {
-                    const snap = await db.collection("brands").where("slug", "==", slug).get();
-                    if (snap.empty) {
-                        isTaken = false;
-                    } else {
-                        slug += '-' + Math.floor(Math.random() * 10000);
-                    }
-                }
-
                 const cred = await auth.createUserWithEmailAndPassword(email, password);
                 const user = cred.user;
-
-                // Save brand info to Firestore
-                await db.collection("brands").add({
-                    brandName,
-                    slug,
-                    email,
-                    ownerId: user.uid,
-                    created: Date.now()
-                });
 
                 // Save user info to Firestore
                 await db.collection("users").doc(user.uid).set({
@@ -1824,10 +1803,13 @@
 
                 // Fetch brand info from Firestore
                 const brands = await getUserBrands(user.uid);
-                if (brands.length === 0) return { ok: false, err: 'المستخدم غير موجود في قاعدة البيانات.' };
-
-                const brandData = brands[0];
-                const safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, id: brandData.id, uid: user.uid, logoUrl: brandData.logoUrl, themeColor: brandData.themeColor || '#7c3aed', displayNameAr: brandData.displayNameAr, displayNameEn: brandData.displayNameEn };
+                let safe;
+                if (brands.length === 0) {
+                    safe = { email: user.email, brandName: null, slug: null, id: null, uid: user.uid, logoUrl: null, themeColor: '#7c3aed' };
+                } else {
+                    const brandData = brands[0];
+                    safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, id: brandData.id, uid: user.uid, logoUrl: brandData.logoUrl, themeColor: brandData.themeColor || '#7c3aed', displayNameAr: brandData.displayNameAr, displayNameEn: brandData.displayNameEn };
+                }
                 setUser(safe);
                 applyTheme(safe.themeColor);
                 return { ok: true, user: safe };
@@ -1849,13 +1831,16 @@
         auth.onAuthStateChanged(async (user) => {
             if (user && user.emailVerified) {
                 const brands = await getUserBrands(user.uid);
+                let safe;
                 if (brands.length > 0) {
                     let me = getCurrentUser();
                     let brandData = brands.find(b => me && b.slug === me.slug) || brands[0];
-                    const safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, id: brandData.id, uid: user.uid, logoUrl: brandData.logoUrl, themeColor: brandData.themeColor || '#7c3aed', displayNameAr: brandData.displayNameAr, displayNameEn: brandData.displayNameEn };
-                    setUser(safe);
-                    applyTheme(safe.themeColor);
+                    safe = { email: user.email, brandName: brandData.brandName, slug: brandData.slug, id: brandData.id, uid: user.uid, logoUrl: brandData.logoUrl, themeColor: brandData.themeColor || '#7c3aed', displayNameAr: brandData.displayNameAr, displayNameEn: brandData.displayNameEn };
+                } else {
+                    safe = { email: user.email, brandName: null, slug: null, id: null, uid: user.uid, logoUrl: null, themeColor: '#7c3aed' };
                 }
+                setUser(safe);
+                applyTheme(safe.themeColor);
             } else {
                 setUser(null);
                 applyTheme('#7c3aed');
@@ -2159,7 +2144,6 @@
             function signupForm() {
                 return `
 <form id="af" novalidate>
-  <div class="form-group"><label class="form-label">${t('brandName')}</label><input class="form-input" id="abn" type="text" placeholder="${t('brandPlaceholder')}" maxlength="40"/></div>
   <div class="form-group"><label class="form-label">${t('email')}</label><input class="form-input" id="ae" type="email" placeholder="you@example.com" autocomplete="username"/></div>
   <div class="form-group"><label class="form-label">${t('password')}</label><input class="form-input" id="ap" type="password" placeholder="${t('passHint')}" autocomplete="new-password"/></div>
   <button class="btn btn-p btn-full btn-lg" type="submit" id="asub">${t('createBtn')}</button>
@@ -2212,16 +2196,14 @@
                         if (!isEmail(email)) { showAlert(t('invalidEmail')); return; }
                         setLoading(true); await delay(280);
                         const r = await login(email, pass); setLoading(false);
-                        if (r.ok) { toast(`${t('welcomeBack')}, ${r.user.brandName}! 👋`); navigate('/dashboard'); }
+                        if (r.ok) { toast(`${t('welcomeBack')}, ${r.user.brandName ? r.user.brandName : 'User'}! 👋`); navigate('/dashboard'); }
                         else showAlert(r.err);
                     } else {
-                        const brand = q('#abn')?.value.trim();
-                        if (!brand) { showAlert(t('fieldsRequired')); return; }
                         if (!isEmail(email)) { showAlert(t('invalidEmail')); return; }
                         if (pass.length < 6) { showAlert(t('passTooShort')); return; }
                         setLoading(true); await delay(380);
-                        const r = await signup(email, pass, brand); setLoading(false);
-                        if (r.ok) { toast(`${t('brandPageCreated')}! ${t('welcome')}, ${r.user.brandName} 🎉`, 'ok', 4000); navigate('/dashboard'); }
+                        const r = await signup(email, pass); setLoading(false);
+                        if (r.ok) { toast(`${t('brandPageCreated')}! 🎉`, 'ok', 4000); navigate('/dashboard'); }
                         else showAlert(r.err);
                     }
                 });
@@ -2238,6 +2220,78 @@
             async function draw() {
                 me = getCurrentUser(); if (!me) { navigate('/login'); return; }
                 const userBrands = await getUserBrands(me.uid);
+
+                function bindNewBrandBtnOnly() {
+                    qAll('.b-new-brand-btn').forEach(btn => btn.addEventListener('click', () => {
+                        openModal(getLang() === 'ar' ? '➕ إنشاء علامة تجارية جديدة' : '➕ Create New Brand', body => {
+                            body.innerHTML = `
+                                <div id="nb-alert"></div>
+                                <div class="form-group"><label class="form-label">${t('brandName')}</label><input class="form-input" id="nb-name" type="text" placeholder="${t('brandPlaceholder')}" maxlength="40"/>
+                                    <div class="form-helper" id="nb-sp">${t('slugHint')}</div></div>
+                                <button class="btn btn-p btn-full" id="nb-sub">${t('createBtn')}</button>
+                            `;
+                            const bInput = body.querySelector('#nb-name'), sp = body.querySelector('#nb-sp');
+                            if (bInput && sp) bInput.addEventListener('input', () => {
+                                const s = slugify(bInput.value);
+                                sp.innerHTML = s ? `${t('slugHint').split(' /')[0]} <strong style="color:#a78bfa">/${s}</strong>` : t('slugHint');
+                            });
+                            body.querySelector('#nb-sub').onclick = async () => {
+                                const name = bInput.value.trim();
+                                const slug = slugify(name);
+                                if (!name) { body.querySelector('#nb-alert').innerHTML = `<div class="alert alert-e">❌ ${t('fieldsRequired')}</div>`; return; }
+
+                                const btn = body.querySelector('#nb-sub');
+                                btn.disabled = true; btn.innerText = t('loading');
+
+                                try {
+                                    const snap = await db.collection("brands").where("slug", "==", slug).get();
+                                    if (!snap.empty) { throw new Error(t('slugTaken')); }
+
+                                    const newBrand = { brandName: name, slug, email: me.email, ownerId: me.uid, created: Date.now() };
+                                    const docRef = await db.collection("brands").add(newBrand);
+
+                                    const safe = { email: me.email, brandName: name, slug, id: docRef.id, uid: me.uid, themeColor: '#7c3aed' };
+                                    setUser(safe);
+                                    applyTheme('#7c3aed');
+                                    closeModal();
+                                    toast(t('brandPageCreated') + '! 🎉', 'ok');
+                                    renderDashboard('overview');
+                                } catch (err) {
+                                    body.querySelector('#nb-alert').innerHTML = `<div class="alert alert-e">❌ ${err.message}</div>`;
+                                    btn.disabled = false; btn.innerText = t('createBtn');
+                                }
+                            };
+                        });
+                    }));
+                }
+
+                if (userBrands.length === 0) {
+                    document.getElementById('app').innerHTML = `
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+<div class="page">
+  <nav class="nav">
+    <div class="nav-brand" id="dl">🔗 LinkBrand</div>
+    <div class="nav-actions">
+      <button class="btn btn-g btn-sm" id="lang-toggle">${t('langName')}</button>
+      <button class="btn btn-g btn-sm" id="dlo">${t('logout')}</button>
+    </div>
+  </nav>
+  <div style="display:flex;align-items:center;justify-content:center;min-height:70vh;padding:1.5rem">
+    <div class="card" style="max-width:480px;text-align:center;padding:3rem;display:flex;flex-direction:column;gap:1.5rem;align-items:center">
+      <div style="font-size:3.5rem">✨</div>
+      <h2>${getLang() === 'ar' ? 'أنشئ علامتك التجارية الأولى' : 'Create Your First Brand'}</h2>
+      <p style="color:var(--text2);line-height:1.6">${getLang() === 'ar' ? 'ابدأ بإنشاء صفحة علامتك التجارية لمشاركة روابطك وإنشاء رمز QR.' : 'Get started by creating your first brand page to share links and generate a QR code.'}</p>
+      <button class="btn btn-p btn-lg b-new-brand-btn" style="width:100%">➕ ${getLang() === 'ar' ? 'إنشاء علامة تجارية' : 'Create Brand'}</button>
+    </div>
+  </div>
+</div>`;
+                    q('#dl').onclick = () => navigate('/');
+                    q('#lang-toggle').onclick = () => setLang(getLang() === 'ar' ? 'en' : 'ar');
+                    q('#dlo').onclick = async () => { await logout(); toast(t('deleted').replace('الرابط', 'الجلسة'), 'info'); navigate('/'); };
+                    bindNewBrandBtnOnly();
+                    return;
+                }
+
                 const l = getLang(), links = await getLinks(me.slug), pUrl = publicUrl(me.slug);
 
                 document.getElementById('app').innerHTML = `
@@ -2276,8 +2330,8 @@
       <div class="sidebar-profile">
           ${renderAvatar(me, 'sb-av')}
           <div style="overflow:hidden">
-              <div class="sidebar-profile-name">${me.brandName}</div>
-              <div class="sidebar-profile-handle">/${me.slug}</div>
+              <div class="sidebar-profile-name">${me.brandName || 'No Brand'}</div>
+              <div class="sidebar-profile-handle">/${me.slug || ''}</div>
           </div>
       </div>
     </aside>
@@ -2293,7 +2347,7 @@
     </nav>
   </div>
 </div>`;
-                bindDash(links, pUrl, userBrands, me);
+                bindDash(links, pUrl, userBrands, me, bindNewBrandBtnOnly);
             }
             function drawSection(s, links, pUrl, me) {
                 if (s === 'overview') return secOverview(links, pUrl, me);
@@ -2302,7 +2356,7 @@
                 if (s === 'profile') return secProfile(me);
                 return secOverview(links, pUrl, me);
             }
-            function bindDash(links, pUrl, userBrands, me) {
+            function bindDash(links, pUrl, userBrands, me, bindNewBrandBtnOnly) {
                 q('#dl').onclick = () => navigate('/');
                 q('#lang-toggle').onclick = () => setLang(getLang() === 'ar' ? 'en' : 'ar');
                 if (q('#dadmin')) q('#dadmin').onclick = () => navigate('/admin');
@@ -2330,47 +2384,7 @@
                 setupCustomSelect('mob-b-switcher', brandOptions, currentId, onBrandSwitch);
 
                 // New Brand Modal
-                qAll('.b-new-brand-btn').forEach(btn => btn.addEventListener('click', () => {
-                    openModal('➕ Create New Brand', body => {
-                        body.innerHTML = `
-                            <div id="nb-alert"></div>
-                            <div class="form-group"><label class="form-label">${t('brandName')}</label><input class="form-input" id="nb-name" type="text" placeholder="${t('brandPlaceholder')}" maxlength="40"/>
-                                <div class="form-helper" id="nb-sp">${t('slugHint')}</div></div>
-                            <button class="btn btn-p btn-full" id="nb-sub">${t('createBtn')}</button>
-                        `;
-                        const bInput = body.querySelector('#nb-name'), sp = body.querySelector('#nb-sp');
-                        if (bInput && sp) bInput.addEventListener('input', () => {
-                            const s = slugify(bInput.value);
-                            sp.innerHTML = s ? `${t('slugHint').split(' /')[0]} <strong style="color:#a78bfa">/${s}</strong>` : t('slugHint');
-                        });
-                        body.querySelector('#nb-sub').onclick = async () => {
-                            const name = bInput.value.trim();
-                            const slug = slugify(name);
-                            if (!name) { body.querySelector('#nb-alert').innerHTML = `<div class="alert alert-e">❌ ${t('fieldsRequired')}</div>`; return; }
-
-                            const btn = body.querySelector('#nb-sub');
-                            btn.disabled = true; btn.innerText = t('loading');
-
-                            try {
-                                const snap = await db.collection("brands").where("slug", "==", slug).get();
-                                if (!snap.empty) { throw new Error(t('slugTaken')); }
-
-                                const newBrand = { brandName: name, slug, email: me.email, ownerId: me.uid, created: Date.now() };
-                                const docRef = await db.collection("brands").add(newBrand);
-
-                                const safe = { email: me.email, brandName: name, slug, id: docRef.id, uid: me.uid, themeColor: '#7c3aed' };
-                                setUser(safe);
-                                applyTheme('#7c3aed');
-                                closeModal();
-                                toast(t('brandPageCreated') + '! 🎉', 'ok');
-                                renderDashboard('overview');
-                            } catch (err) {
-                                body.querySelector('#nb-alert').innerHTML = `<div class="alert alert-e">❌ ${err.message}</div>`;
-                                btn.disabled = false; btn.innerText = t('createBtn');
-                            }
-                        };
-                    });
-                }));
+                bindNewBrandBtnOnly();
                 if (active === 'overview') {
                     q('#ocopy')?.addEventListener('click', () => { navigator.clipboard.writeText(pUrl).then(() => toast(t('linkCopied'))); });
                     q('#ogo')?.addEventListener('click', () => { active = 'links'; draw(); });
