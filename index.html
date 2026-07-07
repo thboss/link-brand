@@ -1793,6 +1793,13 @@
                     created: Date.now()
                 });
 
+                // Save user info to Firestore
+                await db.collection("users").doc(user.uid).set({
+                    uid: user.uid,
+                    email: email,
+                    created: Date.now()
+                });
+
                 await user.sendEmailVerification();
                 await auth.signOut();
 
@@ -2865,9 +2872,9 @@ ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><di
   <div class="dash-layout">
     <aside class="sidebar" style="width:240px">
       <div class="sb-label">Admin System</div>
-      ${['overview', 'brands', 'links'].map(s => `
+      ${['overview', 'users', 'brands', 'links'].map(s => `
         <div class="sb-link${active === s ? ' active' : ''}" data-s="${s}">
-          <span class="ic">${s === 'overview' ? '📊' : s === 'brands' ? '🏢' : '🔗'}</span> ${s.charAt(0).toUpperCase() + s.slice(1)}
+          <span class="ic">${s === 'overview' ? '📊' : s === 'users' ? '👤' : s === 'brands' ? '🏢' : '🔗'}</span> ${s.charAt(0).toUpperCase() + s.slice(1)}
         </div>`).join('')}
     </aside>
     <main class="main" id="am">
@@ -2890,15 +2897,40 @@ ${links.length === 0 ? `<div class="empty"><div class="empty-icon">🔗</div><di
                 if (s === 'overview') {
                     // Quick counts
                     try {
+                        const usersSnap = await db.collection("users").get();
                         const brandsSnap = await db.collection("brands").get();
                         const linksSnap = await db.collection("links").get();
                         main.innerHTML = `
                         <div class="sec-header" style="margin-bottom:1.5rem"><div><div class="sec-title">System Overview</div></div></div>
                         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1.5rem">
+                            <div class="card" style="text-align:center"><h2>${usersSnap.size}</h2><p style="color:var(--muted)">Total Users</p></div>
                             <div class="card" style="text-align:center"><h2>${brandsSnap.size}</h2><p style="color:var(--muted)">Total Brands</p></div>
                             <div class="card" style="text-align:center"><h2>${linksSnap.size}</h2><p style="color:var(--muted)">Total Links</p></div>
                         </div>`;
                     } catch (e) { main.innerHTML = `<div class="alert alert-e">Error: ${e.message}</div>`; }
+                }
+                else if (s === 'users') {
+                    try {
+                        const snap = await db.collection("users").get();
+                        const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.created || 0) - (a.created || 0));
+                        const html = docs.map(u => {
+                            const dateStr = u.created ? new Date(u.created).toLocaleString() : 'N/A';
+                            return `<div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid var(--border)">
+                                <div><strong>${u.email}</strong></div>
+                                <div style="font-size:0.8rem;color:var(--muted)">ID: ${u.uid}</div>
+                                <div style="font-size:0.8rem">${dateStr}</div>
+                                <button class="btn btn-g btn-sm bdel-user" data-id="${u.id}">Delete</button>
+                            </div>`;
+                        }).join('') || '<div style="padding:1rem;text-align:center">No users found.</div>';
+
+                        main.innerHTML = `<div class="sec-header" style="margin-bottom:1.5rem"><div><div class="sec-title">All Users</div></div></div><div class="card" style="padding:0">${html}</div>`;
+                        main.querySelectorAll('.bdel-user').forEach(btn => btn.onclick = async () => {
+                            if (confirm('Delete this user record permanently?')) {
+                                await db.collection("users").doc(btn.dataset.id).delete();
+                                loadAdminData('users');
+                            }
+                        });
+                    } catch (e) { main.innerHTML = `<div class="alert alert-e">Error loading users. ${e.message}</div>`; }
                 }
                 else if (s === 'brands') {
                     try {
