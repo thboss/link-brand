@@ -2159,6 +2159,7 @@
             function signupForm() {
                 return `
 <form id="af" novalidate>
+  <div class="form-group"><label class="form-label">${t('brandName')}</label><input class="form-input" id="abn" type="text" placeholder="${t('brandPlaceholder')}" maxlength="40"/></div>
   <div class="form-group"><label class="form-label">${t('email')}</label><input class="form-input" id="ae" type="email" placeholder="you@example.com" autocomplete="username"/></div>
   <div class="form-group"><label class="form-label">${t('password')}</label><input class="form-input" id="ap" type="password" placeholder="${t('passHint')}" autocomplete="new-password"/></div>
   <button class="btn btn-p btn-full btn-lg" type="submit" id="asub">${t('createBtn')}</button>
@@ -2207,14 +2208,16 @@
                 q('#af').addEventListener('submit', async e => {
                     e.preventDefault();
                     const email = q('#ae')?.value.trim(), pass = q('#ap')?.value;
-                    if (!isEmail(email)) { showAlert(t('invalidEmail')); return; }
                     if (cur === 'login') {
+                        if (!isEmail(email)) { showAlert(t('invalidEmail')); return; }
                         setLoading(true); await delay(280);
                         const r = await login(email, pass); setLoading(false);
                         if (r.ok) { toast(`${t('welcomeBack')}, ${r.user.brandName}! 👋`); navigate('/dashboard'); }
                         else showAlert(r.err);
                     } else {
-                        const brand = email.split('@')[0];
+                        const brand = q('#abn')?.value.trim();
+                        if (!brand) { showAlert(t('fieldsRequired')); return; }
+                        if (!isEmail(email)) { showAlert(t('invalidEmail')); return; }
                         if (pass.length < 6) { showAlert(t('passTooShort')); return; }
                         setLoading(true); await delay(380);
                         const r = await signup(email, pass, brand); setLoading(false);
