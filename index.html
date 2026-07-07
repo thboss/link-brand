@@ -1779,10 +1779,11 @@
                     created: Date.now()
                 });
 
-                await user.sendEmailVerification();
-                await auth.signOut();
+                const safe = { email: user.email, brandName: null, slug: null, id: null, uid: user.uid, logoUrl: null, themeColor: '#7c3aed' };
+                setUser(safe);
+                applyTheme(safe.themeColor);
 
-                return { ok: false, err: t('verifyEmail') };
+                return { ok: true, user: safe };
             } catch (e) {
                 let msg = e.message;
                 if (e.code === 'auth/email-already-in-use') msg = 'البريد الإلكتروني مستخدم بالفعل.';
@@ -1795,11 +1796,6 @@
             try {
                 const cred = await auth.signInWithEmailAndPassword(email, password);
                 const user = cred.user;
-
-                if (!user.emailVerified) {
-                    await auth.signOut();
-                    return { ok: false, err: t('emailNotVerified') };
-                }
 
                 // Fetch brand info from Firestore
                 const brands = await getUserBrands(user.uid);
@@ -1829,7 +1825,7 @@
 
         // Persistent Auth State Handler
         auth.onAuthStateChanged(async (user) => {
-            if (user && user.emailVerified) {
+            if (user) {
                 const brands = await getUserBrands(user.uid);
                 let safe;
                 if (brands.length > 0) {
