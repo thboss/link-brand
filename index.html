@@ -2575,6 +2575,18 @@
                     if (plat.key === 'phone') {
                         const clean = handle.replace(/[^\d+]/g, '');
                         uEl.value = 'tel:' + clean;
+                    } else if (plat.key === 'whatsapp') {
+                        // Normalize phone number for WhatsApp wa.me link
+                        let phone = handle.replace(/[\s\-().]/g, ''); // strip spaces/dashes
+                        if (phone.startsWith('00')) {
+                            phone = '+' + phone.substring(2); // 00966... → +966...
+                        } else if (phone.startsWith('0') && !phone.startsWith('+')) {
+                            phone = '+966' + phone.substring(1); // 05... → +96605... stripped to +9665...
+                        } else if (!phone.startsWith('+')) {
+                            phone = '+966' + phone; // bare digits with no prefix → add +966
+                        }
+                        phone = phone.replace(/[^\d+]/g, ''); // final clean
+                        uEl.value = `https://wa.me/${phone}`;
                     } else if (plat.key === 'emailLink') {
                         uEl.value = 'mailto:' + handle;
                     } else if (plat.d) {
